@@ -8,4 +8,3 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::post('auth/login', [AuthController::class, 'handleLogin'])->name('auth.login');
-Route::post('/logout', [AuthController::class, 'logout']);

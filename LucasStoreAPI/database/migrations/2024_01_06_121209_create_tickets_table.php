@@ -1,0 +1,42 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateTicketsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('tickets', function (Blueprint $table) {
+            $table->uuid('id')->primary()->index()->comment('UUID generated automatically in code');
+            $table->longText('data_customer');
+            $table->float('price');
+            $table->string('gitcode',100);
+            $table->integer('quantity');
+            $table->dateTime('date_end');
+            $table->enum('status', [
+                'pending',
+                'active',
+                'suspended',
+            ])->default('active');
+            $table->integer('code')->unsigned()->unique()->comment('Auto-incremented code');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('tickets');
+    }
+}

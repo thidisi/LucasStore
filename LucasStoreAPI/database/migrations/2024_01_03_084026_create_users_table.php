@@ -16,9 +16,9 @@ return new class extends Migration
 
             // String columns
             $table->string('email', 100)->unique();
-            $table->string('password', 100);
-            $table->string('name', 200);
-            $table->string('phone', 15)->unique();
+            $table->string('password', 100)->nullable();
+            $table->string('name', 200)->nullable();
+            $table->string('phone', 15)->unique()->nullable();
             $table->text('avatar', 255)->nullable();
             $table->date('birthday')->nullable();
             $table->enum('gender', [

@@ -3,22 +3,38 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class CategoryController extends Controller
 {
-    public function __construct(User $user)
+    public function __construct(Category $category)
     {
-        $this->user = $user;
+        $this->category = $category;
     }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $users = $this->user->get();
-        return response()->json(['users' => $users], 200);
+        $categories = $this->category->get();
+        return response()->json(['categories' => $categories], 200);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
     }
 
     /**

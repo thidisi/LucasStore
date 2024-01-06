@@ -3,22 +3,38 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Major_Category;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class MajorCategoryController extends Controller
 {
-    public function __construct(User $user)
+    public function __construct(Major_Category $major_category)
     {
-        $this->user = $user;
+        $this->major_category = $major_category;
     }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $users = $this->user->get();
-        return response()->json(['users' => $users], 200);
+        $major_categories = $this->major_category->get();
+        return response()->json(['major_categories' => $major_categories], 200);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
     }
 
     /**
