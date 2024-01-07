@@ -25,17 +25,14 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'id' => Str::uuid(),
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
             'password' => bcrypt('password'),
             'phone' => substr($this->faker->phoneNumber, 0, 15),
-            'avatar' => $this->faker->imageUrl,
-            'status' => $this->faker->randomElement(['active', 'inactive']),
             'role_id' => function () {
                 return \App\Models\Role::factory()->create()->id;
             },
-            'code' => $this->faker->unique()->randomNumber,
+            "last_login" => now(),
         ];
     }
 

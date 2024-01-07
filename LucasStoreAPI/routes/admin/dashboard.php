@@ -8,6 +8,6 @@ use Illuminate\Support\Facades\Route;
 | Web Routes
 |--------------------------------------------------------------------------
 */
-Route::group(['middleware' => 'auth:api'], function () {
+Route::group(['middleware' => ['auth:api']], function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });

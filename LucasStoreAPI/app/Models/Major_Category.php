@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\Uuid;
+use Illuminate\Support\Str;
 
 class Major_Category extends Model
 {
@@ -50,13 +51,19 @@ class Major_Category extends Model
         'updated_at' => 'date:d-m-Y'
     ];
 
-    public function categories()
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = $value;
+        $this->attributes['slug'] = Str::slug($value);
+    }
+
+    public function category()
     {
         return $this->hasMany(Category::class, 'major_category_id');
     }
 
-    public function slide()
-    {
-        return $this->hasMany(Slide::class, 'major_category_id');
-    }
+    // public function slide()
+    // {
+    //     return $this->hasMany(Slide::class, 'major_category_id');
+    // }
 }

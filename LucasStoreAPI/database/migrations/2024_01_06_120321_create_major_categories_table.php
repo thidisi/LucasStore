@@ -20,11 +20,10 @@ return new class extends Migration
                 'hot_default',
                 'hide',
             ])->default('show');
-            // Auto-incremented code with unique constraint
-            $table->integer('code')->unsigned()->unique()->comment('Auto-incremented code');
             $table->timestamps();
             $table->softDeletes();
         });
+        \DB::statement('ALTER Table major_categories add code INTEGER UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT;');
     }
 
     /**

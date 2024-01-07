@@ -67,3 +67,4 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 
 
 composer require laravel/passport --ignore-platform-req=ext-sodium
+php artisan passport:client --personal

@@ -20,7 +20,6 @@ class RoleFactory extends Factory
     {
         return [
             'name' => $this->faker->word,
-            'status' => $this->faker->randomElement(['active', 'inactive']),
         ];
     }
 }

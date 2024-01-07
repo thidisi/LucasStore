@@ -23,10 +23,11 @@ class CreateContactTable extends Migration
                 'inactive',
                 'pending',
             ])->default('pending');
-            $table->integer('code')->unsigned()->unique()->comment('Auto-incremented code');
             $table->timestamps();
             $table->softDeletes();
         });
+        // Auto-incremented code with unique constraint
+        \DB::statement('ALTER Table contacts add code INTEGER UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT;');
     }
 
     /**

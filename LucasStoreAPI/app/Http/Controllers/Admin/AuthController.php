@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class AuthController extends Controller
 {
-    public function handleLogin(Request $request)
+    public function handleLogin(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
         $remember = $request->only('remember') ? true : false;
@@ -19,22 +20,9 @@ class AuthController extends Controller
             return response()->json(['user' => auth()->user(), 'token' => $token], 200);
         }
 
-        return response()->json(['error' => 'Unauthenticated'], 401);
+        return response()->json(['error' => 'Login error'], 401);
     }
 
-
-    public function login(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
-
-        if (auth()->attempt($credentials)) {
-            $user = auth()->user();
-            // dd($user);
-            return redirect()->route('dashboard');
-        }
-
-        return redirect()->back()->with('error', "Invalid");
-    }
 
     public function logout()
     {

@@ -27,17 +27,16 @@ return new class extends Migration
             ]);
 
             // Foreign key
-            $table->foreignId('role_id')->constrained()->onDelete('cascade');
-
-            // Auto-incremented code with unique constraint
-            $table->integer('code')->unsigned()->unique()->comment('Auto-incremented code');
+            $table->foreignId('role_id')->nullable()->constrained()->onDelete('cascade');
 
             // Enum status with default value
             $table->enum('status', ['active', 'inactive', 'pending'])->default('active');
-
+            $table->dateTime('last_login')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
+        // Auto-incremented code with unique constraint
+        \DB::statement('ALTER Table users add code INTEGER UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT;');
     }
 
     /**

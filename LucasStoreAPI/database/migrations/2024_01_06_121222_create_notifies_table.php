@@ -21,9 +21,10 @@ class CreateNotifiesTable extends Migration
             $table->text('discounts')->nullable();
             $table->text('orders')->nullable();
             $table->text('tickets')->nullable();
-            $table->integer('code')->unsigned()->unique()->comment('Auto-incremented code');
             $table->timestamps();
         });
+        // Auto-incremented code with unique constraint
+        \DB::statement('ALTER Table notifies add code INTEGER UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT;');
     }
 
     /**

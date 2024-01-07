@@ -29,10 +29,11 @@ class CreateSlideTable extends Migration
                 'active',
                 'inactive',
             ])->default('active');
-            $table->integer('code')->unsigned()->unique()->comment('Auto-incremented code');
             $table->timestamps();
             $table->softDeletes();
         });
+        // Auto-incremented code with unique constraint
+        \DB::statement('ALTER Table slide add code INTEGER UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT;');
     }
 
     /**
