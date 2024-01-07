@@ -86,7 +86,6 @@
               <VBtn
                 block
                 type="submit"
-                @click="login"
               >
                 Login
               </VBtn>
@@ -177,7 +176,7 @@ export default {
 
           let token = localStorage.getItem('token')
 
-          const response = await axios.post('http://127.0.0.1:8000/api/auth/login', {
+          const response = await axios.post('/auth/login', {
             email,
             password,
             remember,
@@ -192,7 +191,7 @@ export default {
           }
 
           store.dispatch('login')
-          router.push({ path: '/dashboard' })
+          router.push({ name: 'dashboard' })
         }
       } catch (error) {
         form.password = ''

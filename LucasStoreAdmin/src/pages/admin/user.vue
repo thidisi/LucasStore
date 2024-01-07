@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import DataUserList from '@/views/pages/admin/user/DataUserList.vue'
+import DataUserList from "@/views/pages/admin/user/DataUserList.vue"
 
 export default {
   components: {
