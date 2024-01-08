@@ -20,7 +20,7 @@ class MajorCategoryController extends Controller
      */
     public function index()
     {
-        $major_categories = $this->majorCategory->get();
+        $major_categories = $this->majorCategory->getAndWithCache();
         return response()->json(['major_categories' => $major_categories], 200);
     }
 
@@ -57,12 +57,12 @@ class MajorCategoryController extends Controller
     public function edit(string $id)
     {
         try {
-            $major_category = $this->majorCategory->with('category')->findOrFail($id);
+            $major_category = $this->majorCategory->findAndWithCache($id);
             return response()->json([
                 'major_category' => $major_category
             ], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => config('const.not_content')], 403);
+            return response()->json(['message' => config('const.message_error')], 403);
         }
     }
 
@@ -71,7 +71,7 @@ class MajorCategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        try {
+        // try {
             $major_category = $this->majorCategory->findOrFail($id);
             $data = $request->validate([
                 'name' => [
@@ -85,9 +85,9 @@ class MajorCategoryController extends Controller
             return response()->json([
                 'major_category' => $major_category,
             ], 200);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => config('const.not_content')], 403);
-        }
+        // } catch (\Throwable $th) {
+        //     return response()->json(['message' => config('const.message_error')], 403);
+        // }
     }
 
     /**
@@ -99,7 +99,7 @@ class MajorCategoryController extends Controller
             $this->majorCategory->destroy($id);
             return response('MajorCategory deleted successfully.', 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => config('const.not_content')], 403);
+            return response()->json(['message' => config('const.message_error')], 403);
         }
     }
 }

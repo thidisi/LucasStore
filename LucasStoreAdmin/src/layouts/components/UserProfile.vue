@@ -126,6 +126,7 @@
 </template>
 
 <script>
+import axios from '@/plugins/axios'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import avatar1 from '@images/avatars/avatar-1.png'
@@ -135,7 +136,8 @@ export default {
     const router = useRouter()
     const store = useStore()
 
-    const handleLogoutClick = () => {
+    const handleLogoutClick = async() => {
+      await axios.post('/auth/logout')
       localStorage.removeItem('token')
       store.dispatch('logout')
       router.push({ path: '/login' })

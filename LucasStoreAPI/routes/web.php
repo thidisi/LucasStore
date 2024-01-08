@@ -14,7 +14,7 @@ Route::get('/', function () {
 });
 
 Route::get('/{pathMatch}', function () {
-    abort(401, 'Unauthorized');
+    return response()->json(['message' => config('const.message_error')], 401);
 })->where('pathMatch', '.*');
 
 foreach (File::allFiles(__DIR__ . '/client') as $routeFile) {

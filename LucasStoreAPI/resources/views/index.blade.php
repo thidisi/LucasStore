@@ -16,13 +16,15 @@
             margin: 0;
             position: relative;
         }
-        p{
+
+        p {
             margin: 0;
             position: absolute;
             right: 18%;
             bottom: 28%;
             font-size: 1rem;
         }
+
         span {
             margin: 0;
             font-family: 'Great Vibes', cursive;
@@ -34,13 +36,13 @@
 
 <body>
     <pre>
-        ************************************************************************
-        L     U     U  CCCCC  AAAAA  SSSSS       SSSSS TTTTTT  OOO  RRRR   EEEEE
-        L     U     U C       A   A  S          S        TT   O   O R   R  E
-        L     U     U C       AAAAA  SSSSS       SSSSS   TT   O   O RRRR   EEEE
-        L     U     U C       A   A       S           S  TT   O   O R  R   E
-        LLLLL  UUUUU   CCCCC  A   A  SSSSS       SSSSS   TT    OOO  R   R  EEEEE
-        ************************************************************************
+        ********************************************************************************
+        * L     U     U   CCCCC  AAAAA   SSSSS       SSSSS  TTTTTT  OOO   RRRR   EEEEE *
+        * L     U     U  C       A   A  S           S         TT   O   O  R   R  E     *
+        * L     U     U  C       AAAAA   SSSSS       SSSSS    TT   O   O  RRRR   EEEE  *
+        * L     U     U  C       A   A        S           S   TT   O   O  R  R   E     *
+        * LLLLL  UUUUU    CCCCC  A   A   SSSSS       SSSSS    TT    OOO   R   R  EEEEE *
+        ********************************************************************************
     <p>Sign: <span>Phong Van Le</span></p>
     </pre>
 </body>

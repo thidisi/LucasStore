@@ -14,11 +14,6 @@ import { createApp } from "vue"
 
 loadFonts()
 
-const isAuthenticated = localStorage.getItem("isAuthenticated")
-if (isAuthenticated !== null) {
-  store.commit("setAuthentication", JSON.parse(isAuthenticated))
-}
-
 // Create vue app
 const app = createApp(App)
 

@@ -22,7 +22,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = $this->category->get();
+        $categories = $this->category->getAndWithCache();
         return response()->json(['categories' => $categories], 200);
     }
 
@@ -61,12 +61,12 @@ class CategoryController extends Controller
     public function edit(string $id)
     {
         try {
-            $category = $this->category->with('major_category')->findOrFail($id);
+            $category = $this->category->findAndWithCache($id);
             return response()->json([
                 'category' => $category
             ], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => config('const.not_content')], 403);
+            return response()->json(['message' => config('const.message_error')], 403);
         }
     }
 
@@ -86,7 +86,7 @@ class CategoryController extends Controller
                 'category' => $category,
             ], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => config('const.not_content')], 403);
+            return response()->json(['message' => config('const.message_error')], 403);
         }
     }
 
@@ -99,7 +99,7 @@ class CategoryController extends Controller
             $this->category->destroy($id);
             return response('Category deleted successfully.', 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => config('const.not_content')], 403);
+            return response()->json(['message' => config('const.message_error')], 403);
         }
     }
 }

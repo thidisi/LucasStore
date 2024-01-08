@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 use App\Traits\Uuid;
 use Illuminate\Support\Str;
 
@@ -31,11 +32,11 @@ class Category extends Model
         "major_category_id",
     ];
 
-    const CATEGORY_STATUS = [
-        'ACTIVE' => 'active',
-        'INACTIVE' => 'inactive',
-    ];
+    const ONE_MONTH = 60 * 60 * 24 * 30;
+
     protected $keyType = 'uuid';
+
+    private static array $caches = [];
 
     public $incrementing = false;
 
@@ -55,6 +56,33 @@ class Category extends Model
     {
         $this->attributes['name'] = $value;
         $this->attributes['slug'] = Str::slug($value);
+    }
+
+    protected static function booted(): void
+    {
+        static::updated(static function (Category $category) {
+            cache()->forget('config_categories');
+            cache()->forget('config_category_' . $category->id);
+        });
+    }
+
+    public static function getAndWithCache()
+    {
+        $json = cache()->remember('config_categories', self::ONE_MONTH, function () {
+            return self::query()->get()?->toJson();
+        });
+        return json_decode($json);
+    }
+
+    public static function findAndWithCache($id)
+    {
+        if (isset(self::$cache[$id])) {
+            return self::$cache[$id];
+        }
+        $json = cache()->remember('config_category_' . $id, self::ONE_MONTH, function () use ($id) {
+            return self::query()->with('major_category')->findOrFail($id)?->toJson();
+        });
+        return json_decode($json);
     }
 
     public function major_category()
