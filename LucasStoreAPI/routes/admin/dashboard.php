@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -8,6 +9,9 @@ use Illuminate\Support\Facades\Route;
 | Web Routes
 |--------------------------------------------------------------------------
 */
-Route::group(['middleware' => ['auth:api']], function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-});
+
+Route::middleware('auth:api')
+    ->controller(DashboardController::class)
+    ->group(function () {
+        Route::get('dashboard', 'index');
+    });

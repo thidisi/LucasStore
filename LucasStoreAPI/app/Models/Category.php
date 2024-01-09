@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Cache;
 use App\Traits\Uuid;
 use Illuminate\Support\Str;
 
@@ -24,12 +23,12 @@ class Category extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        "id",
-        "name",
-        "slug",
-        "avatar",
-        "status",
-        "major_category_id",
+        'id',
+        'name',
+        'slug',
+        'avatar',
+        'status',
+        'major_category_id',
     ];
 
     const ONE_MONTH = 60 * 60 * 24 * 30;

@@ -7,15 +7,8 @@
       <VTextField
         v-model="form.name"
         label="Cateogry name"
-        placeholder=""
+        :rules="v$.name.$invalid ? [v$.name.required.$invalid ? v$.name.required.$message : '' + v$.name.minLength.$message] : ''"
       />
-      <span
-        v-for="error in v$.name.$errors"
-        :key="error.$uid"
-        class="text-danger"
-      >
-        {{ error.$message }}
-      </span> 
     </VCol>
 
     <VCol
@@ -27,24 +20,19 @@
         label="Choose Major category"
         :items="response"
         placeholder="Select Menu"
+        :rules="v$.major_category_name.required.$invalid ? [v$.major_category_name.required.$message] : ''"
       />
-      <span
-        v-for="error in v$.major_category_name.$errors"
-        :key="error.$uid"
-        class="text-danger"
-      >
-        {{ error.$message }}
-      </span>
     </VCol>
 
     <VCol>
       <VCardText class="d-flex">
         <!-- 👉 Avatar -->
         <VAvatar
+          v-if="form.avatar"
           rounded="lg"
           size="100"
           class="me-6"
-          :image="form.avatar"
+          :image="renderImg"
         />
 
         <!-- 👉 Upload Photo -->
@@ -67,7 +55,7 @@
               name="file"
               accept=".jpeg,.png,.jpg,GIF"
               hidden
-              @input="changeAvatar"
+              @input="handleFileChange"
             >
             <span
               v-for="error in v$.avatar.$errors"
@@ -135,6 +123,7 @@ export default {
     const refInputEl = ref()
     const response = ref()
     const responses = ref()
+    const renderImg = ref()
 
     const form = ref({
       name: '',
@@ -149,7 +138,6 @@ export default {
           minLength: minLength(4),
         },
         avatar: {
-          allowedFileTypes: allowedFileTypes(['image/jpeg', 'image/gif', 'image/png']),
           maxSize: maxSize(800 * 1024),
         },
         major_category_name: {
@@ -163,17 +151,15 @@ export default {
     const v$ = useVuelidate(rules, form)
 
     const handleFileChange = event => {
-      form.avatar = event.target.files[0]
-    }
+      form.value.avatar = event.target.files[0]
 
-    const changeAvatar = file => {
       const fileReader = new FileReader()
-      const { files } = file.target
+      const { files } = event.target
       if (files && files.length) {
         fileReader.readAsDataURL(files[0])
         fileReader.onload = () => {
           if (typeof fileReader.result === 'string')
-            form.value.avatar = fileReader.result
+            renderImg.value = fileReader.result
         }
       }
     }
@@ -183,9 +169,9 @@ export default {
     }
 
     const resetForm = () => {
-      form.value.name = ''
-      form.value.avatar = ''
-      form.value.major_category_name = ''
+      form.value.name = null
+      form.value.avatar = null
+      form.value.major_category_name = null
       v$.value.$reset()
     }
 
@@ -199,7 +185,18 @@ export default {
           const { name, avatar, major_category_name } = form.value
           const major_category_id = responses.value.find(item => item.name === major_category_name).id
 
-          await axios.post('/categories', { name, avatar, major_category_id })
+
+          const formData = new FormData()
+
+          formData.append('name', name)
+          formData.append('avatar', avatar)
+          formData.append('major_category_id', major_category_id)
+
+          await axios.post('/categories', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          })
 
           resetForm()
 
@@ -230,6 +227,7 @@ export default {
 
         response.value = api.data.major_categories.map(item => item.name)
         responses.value = api.data.major_categories.map(item => ({ id: item.id, name: item.name }))
+        
       } catch (error) {
         console.error('Error in onMounted:', error)
       }
@@ -243,9 +241,9 @@ export default {
       resetForm,
       refInputEl,
       handleFileChange,
-      changeAvatar,
       resetAvatar,
       response,
+      renderImg,
     }
   },
 }
@@ -257,9 +255,5 @@ export default {
   margin-top: 2px;
   margin-left: 4px;
   font-size: 0.9rem;
-}
-.v-avatar  {
-  background-image: url(http://localhost:5173/src/assets/images/avatars/avatar-1.png);
-  background-size: cover;
 }
 </style>

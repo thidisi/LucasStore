@@ -1,17 +1,35 @@
 import { helpers } from '@vuelidate/validators'
 
-export const allowedFileTypes = types => helpers.withParams({ type: 'allowedFileTypes', allowedTypes: types }, value => {
-  if (!value) return true
+export const allowedFileTypes = types => helpers.withParams(
+  { type: 'allowedFileTypes', allowedTypes: types },
+  value => {
+    if (!value) {
+      return 'File is required.'
+    }
 
-  const fileType = value.type
-  
-  return types.includes(fileType)
-})
+    const fileType = value.type
 
-export const maxSize = size => helpers.withParams({ type: 'maxSize', maxSize: size }, value => {
-  if (!value) return true
+    if (!types.includes(fileType)) {
+      return `Invalid file type. Allowed types are: ${types.join(', ')}.`
+    }
 
-  const fileSize = value.size
-  
-  return fileSize <= size
-})
+    return true
+  },
+)
+
+export const maxSize = size => helpers.withParams(
+  { type: 'maxSize', maxSize: size },
+  value => {
+    if (!value) {
+      return 'File is required.'
+    }
+
+    const fileSize = value.size
+
+    if (fileSize > size) {
+      return `File size exceeds the maximum allowed size of ${size} bytes.`
+    }
+
+    return true
+  },
+)

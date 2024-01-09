@@ -2,9 +2,7 @@
 
 namespace App\Services;
 
-use App\Http\Requests\BlogRequest;
 use App\Models\Blog;
-use App\Models\Notify;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -42,7 +40,7 @@ class BlogService
     public function createByParams($params): Blog
     {
         dd($params);
-        $blog = $this->category->create($params);
+        $blog = $this->blog->create($params);
         return $blog;
     }
 

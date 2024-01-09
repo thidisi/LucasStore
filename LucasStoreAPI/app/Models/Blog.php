@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\Uuid;
+use Illuminate\Support\Str;
 
 class Blog extends Model
 {
@@ -22,25 +23,31 @@ class Blog extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        "id",
-        "title",
-        "slug",
-        "content",
-        "image",
-        "count_view",
-        "status"
+        'id',
+        'title',
+        'slug',
+        'content',
+        'image',
+        'count_view',
+        'status'
     ];
 
     protected $keyType = 'uuid';
 
     public $incrementing = false;
 
+    public $timestamps = true;
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['title'] = $value;
+        $this->attributes['slug'] = Str::slug($value);
+    }
+
     const BLOG_STATUS = [
         'ACTIVE' => 'active',
         'INACTIVE' => 'inactive',
     ];
-
-    public $timestamps = true;
 
     /**
      * Return the created_at configuration array for this model.
@@ -51,9 +58,4 @@ class Blog extends Model
         'created_at' => 'date:d-m-Y',
         'updated_at' => 'date:d-m-Y'
     ];
-
-    public function getFormatDateAttribute()
-    {
-        return date("d-M-Y", strtotime($this->created_at)) . "\n";
-    }
 }

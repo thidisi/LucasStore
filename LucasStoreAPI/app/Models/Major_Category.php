@@ -69,9 +69,13 @@ class Major_Category extends Model
         });
     }
 
-    public static function getAndWithCache()
+    public static function getAndWithCache($param = null)
     {
-        $json = cache()->remember('config_major_categories', self::ONE_MONTH, function () {
+        $json = cache()->remember('config_major_categories', self::ONE_MONTH, function () use ($param) {
+            // != Major_Category::MENU_STATUS['HOT_DEFAULT']
+            if (isset($param)) {
+                return self::query()->where('status', '!=', $param)->get()?->toJson();
+            }
             return self::query()->get()?->toJson();
         });
         return json_decode($json);

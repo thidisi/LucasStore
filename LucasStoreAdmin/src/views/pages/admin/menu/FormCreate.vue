@@ -9,15 +9,8 @@
         <VTextField
           v-model="form.name"
           label="Major cateogry name"
-          placeholder="John"
+          :rules="v$.name.$invalid ? [v$.name.required.$invalid ? v$.name.required.$message : '' + v$.name.minLength.$message] : ''"
         />
-        <span
-          v-for="error in v$.name.$errors"
-          :key="error.$uid"
-          class="text-danger"
-        >
-          {{ error.$message }}
-        </span> 
       </VCol>
       <VCol
         cols="12"
@@ -28,14 +21,8 @@
           label="Major cateogry status"
           :items="['show', 'hot_default', 'hide']"
           placeholder="Select Status"
+          :rules="v$.status.required.$invalid ? [v$.status.required.$message] : ''"
         />
-        <span
-          v-for="error in v$.name.$errors"
-          :key="error.$uid"
-          class="text-danger"
-        >
-          {{ error.$message }}
-        </span>
       </VCol>
 
       <VCol
@@ -65,7 +52,7 @@
 import axios from '@/plugins/axios'
 import { useStore } from 'vuex'
 import { useVuelidate } from '@vuelidate/core'
-import { email, minLength, required } from '@vuelidate/validators'
+import { minLength, required } from '@vuelidate/validators'
 
 export default {
   components: {
@@ -95,7 +82,7 @@ export default {
     const v$ = useVuelidate(rules, form)
 
     const resetForm = () => {
-      form.value.name = ''
+      form.value.name = null
       v$.value.$reset()
     }
 
@@ -141,8 +128,5 @@ export default {
   margin-top: 2px;
   margin-left: 4px;
   font-size: 0.9rem;
-}
-.v-select__selection-text {
-  text-transform: capitalize;
 }
 </style>

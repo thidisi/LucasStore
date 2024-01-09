@@ -32,12 +32,7 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
         try {
-            $data = $request->all();
-            if ($request->hasFile('avatar')) {
-                $images = $request->file('avatar');
-                $path = Storage::disk('public')->put('avatarCategories', $images);
-                $data['avatar'] = $path;
-            }
+            $data = $request->validated();
             $categories = $this->categoryService->create($data);
             return response()->json([
                 'category' => $categories,
@@ -45,14 +40,6 @@ class CategoryController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['message' => config('const.message_error')], 403);
         }
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**

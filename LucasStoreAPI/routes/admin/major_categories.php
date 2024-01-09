@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::group(['middleware' => ['auth:api']], function () {
-    Route::resource('major_categories', MajorCategoryController::class);
-});
+Route::middleware('auth:api')
+    ->controller(MajorCategoryController::class)
+    ->group(function () {
+        Route::resource('major_categories', MajorCategoryController::class)->except([
+            'show'
+        ]);
+    });

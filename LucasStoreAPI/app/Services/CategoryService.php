@@ -43,6 +43,8 @@ class CategoryService
      */
     private function createByParams($params): Category
     {
+        $image_path = Storage::disk('public')->put('avatarCategories', $params['avatar']);
+        $params['avatar'] = $image_path;
         $category = $this->category->create($params);
         return $category;
     }
@@ -82,7 +84,6 @@ class CategoryService
             }
             $path = Storage::disk('public')->put('avatarCategories', $images);
             $data['avatar'] = $path ? $path : $category->avatar;
-
         }
         $data['name'] = $params['name'];
         $data['status'] = $params['status'];
