@@ -19,4 +19,5 @@ Route::middleware('auth:api')
             'edit', 'update', 'store', 'destroy'
         ]);
         Route::get('slides', 'dataSlide');
+        Route::post('slides/changeStatus/{id}', 'changStatus');
     });

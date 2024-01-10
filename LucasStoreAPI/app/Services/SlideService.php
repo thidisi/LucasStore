@@ -74,20 +74,19 @@ class SlideService
     private function updateByParams($params): Slide
     {
         $slide = $this->slide->findOrFail($params['id']);
-        // if ($params['checkAvatar']) {
-        //     $images = $params['avatar'];
-        //     if ($category->avatar != null) {
-        //         if (Storage::disk('public')->exists($category->avatar)) {
-        //             Storage::disk('public')->delete($category->avatar);
-        //         }
-        //     }
-        //     $path = Storage::disk('public')->put('avatarCategories', $images);
-        //     $data['avatar'] = $path ? $path : $category->avatar;
-
-        // }
-        // $data['name'] = $params['name'];
-        // $data['status'] = $params['status'];
-        // $category->update($data);
+        if (is_uploaded_file($params['image'])) {
+            $images = $params['image'];
+            if ($slide->image != null) {
+                if (Storage::disk('public')->exists($slide->image)) {
+                    Storage::disk('public')->delete($slide->image);
+                }
+            }
+            $path = Storage::disk('public')->put('imageSlides', $images);
+            $params['image'] = $path ? $path : $slide->image;
+        }else{
+            $params['image'] = $slide->image;
+        }
+        $slide->update($params);
         return $slide;
     }
 }
