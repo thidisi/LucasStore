@@ -150,7 +150,7 @@ const upgradeBanner = computed(() => {
       />
       <VerticalNavLink
         :item="{
-          title: 'Slide',
+          title: 'Slider',
           icon: 'bx-credit-card',
           to: '/admin/slides',
         }"

@@ -43,7 +43,6 @@
         <VCardText class="d-flex">
           <!-- 👉 Image -->
           <VAvatar
-            v-if="form.image"
             rounded="lg"
             size="100"
             class="me-6"
@@ -113,9 +112,10 @@
         </VBtn>
 
         <VBtn
-          type="reset"
+          type="button"
           color="secondary"
           variant="tonal"
+          @click="resetForm"
         >
           Reset
         </VBtn>
@@ -129,25 +129,32 @@ import axios from '@/plugins/axios'
 import { useVuelidate } from '@vuelidate/core'
 import { minLength, required } from '@vuelidate/validators'
 import { useStore } from 'vuex'
+import putSlider from '@/services/slider/putSlider'
 
 export default {
-  components: {
+  props: {
+    dataEdit: {
+      type: Object,
+      default: null,
+    },
   },
   setup(props, { emit }) {
+    const { load } = putSlider()
+
     const store = useStore()
     const refInputEl = ref()
     const response = ref()
     const responses = ref()
     const dataSorts = ref()
     const renderImg = ref()
-
+    const slider = ref()
 
     const form = ref({
-      title: '',
-      slug: '',
+      title: props.dataEdit.slide?.title,
+      slug: props.dataEdit.slide?.slug,
       image: null,
-      major_category_name: null,
-      sort_order: null,
+      major_category_name: props.dataEdit.slide?.major_category.name,
+      sort_order: props.dataEdit.slide?.sort_order,
     })
 
     const rules = computed(() => {
@@ -160,7 +167,6 @@ export default {
           required,
         },
         image: {
-          required,
         },
         major_category_name: {
           required,
@@ -194,11 +200,12 @@ export default {
     }
 
     const resetForm = () => {
-      form.value.title = null
-      form.value.slug = null
+      form.value.title = props.dataEdit.slide?.title
+      form.value.slug = props.dataEdit.slide?.slug,
       form.value.image = null
-      form.value.major_category_name = null
-      form.value.sort_order = null
+      form.value.major_category_name = props.dataEdit.slide?.major_category.name,
+      form.value.sort_order = props.dataEdit.slide?.sort_order,
+      renderImg.value = props.dataEdit.slide.image ? 'http://localhost:8000/storage/' + props.dataEdit.slide.image : null
       v$.value.$reset()
     }
 
@@ -216,17 +223,15 @@ export default {
 
           formData.append('title', title)
           formData.append('slug', slug)
-          formData.append('image', image)
+          formData.append('image', image ? image : '')
           formData.append('major_category_id', major_category_id)
           formData.append('sort_order', sort_order)
+          formData.append('_method', 'PUT')
 
-          await axios.post('/slides', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          })
+          await load(props.dataEdit.slide.id, formData)
 
           resetForm()
+
           // eslint-disable-next-line vue/custom-event-name-casing
           emit('submit-success')
         }
@@ -241,25 +246,25 @@ export default {
 
     }
 
-    const loadData = async () => {
+    const loadData = async data => {
       try {
-        return await axios.get('/slides')
+        response.value = data.menu.map(item => item.name)
+        responses.value = data.menu.map(item => ({ id: item.id, name: item.name }))
+
+        dataSorts.value = Object.values(data.sortOrder)
+        renderImg.value = data.slide.image ? 'http://localhost:8000/storage/' + data.slide.image : null
       } catch (error) {
-        console.error('Error loading data:', error)
+        console.error('Error in onMounted:', error)
       }
     }
 
-    onMounted(async () => {
-      try {
-        const api = await loadData()
+    onMounted(() => {
+      loadData(props.dataEdit)
+    })
 
-        response.value = api.data.menu.map(item => item.name)
-        responses.value = api.data.menu.map(item => ({ id: item.id, name: item.name }))
-
-        dataSorts.value = Object.values(api.data.sortOrder)
-        
-      } catch (error) {
-        console.error('Error in onMounted:', error)
+    watch(() => props.dataEdit, newValue => {
+      if (newValue) {
+        resetForm()
       }
     })
 
@@ -271,10 +276,12 @@ export default {
       resetForm,
       refInputEl,
       handleFileChange,
+      renderImg,
       resetImage,
       response,
       dataSorts,
-      renderImg,
+      loadData,
+      slider,
     }
   },
 }

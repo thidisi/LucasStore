@@ -31,6 +31,8 @@
       >
         <component
           :is="item.component"
+          :data-edit="dataEdit"
+          :reload-data="reloadDataList"
           @submit-success="handleSubmitSuccess"
           @submit-show-edit="handleShowEdit"
         />
@@ -42,18 +44,23 @@
 <script>
 import { ref, computed } from 'vue'
 import FormCreate from '@/views/pages/admin/slide/FormCreate.vue'
+import FormUpdate from '@/views/pages/admin/slide/FormUpdate.vue'
 import GetAllSlide from "@/views/pages/admin/slide/GetAllSlide.vue"
+import GetAllSlider from '@/services/slider/getAllSlider'
 import { useRoute } from 'vue-router'
 
 export default {
   components: {
     FormCreate,
     GetAllSlide,
+    FormUpdate,
   },
   setup(props, { emit }) {
+    const { load_finder } = GetAllSlider()
     
     const route = useRoute()
     const activeTab = ref(route.params.tab || 'list')
+    const dataEdit = ref(null)
 
     // tabs
     const tabs = [
@@ -73,20 +80,20 @@ export default {
         title: 'Edit',
         icon: 'bx-bell',
         tab: 'edit',
-        component: 'FormCreate',
+        component: 'FormUpdate',
       },
     ]
 
     const changeTab = tab => {
+      reloadDataList.value = false
       activeTab.value = tab
     }
 
-    // Middleware (ví dụ: ẩn tab "create" dựa trên điều kiện)
     const shouldShowCreateTabRole = ref(true)
     const shouldShowEditTabRole = ref(true)
     const shouldShowEditTab = ref(false)
 
-    // Filter tabs dựa trên điều kiện middleware
+    // Filter tabs to middleware
     const filteredTabs = computed(() => {
       return tabs.filter(item => {
         if(item.tab == 'create'){
@@ -104,13 +111,17 @@ export default {
       })
     })
 
+    const reloadDataList = ref(false)
 
     const handleSubmitSuccess  = () => {
       changeTab('list')
+      reloadDataList.value = true
+      shouldShowEditTab.value = false
     }
 
-    const handleShowEdit = data => {
-      console.log(data)
+    const handleShowEdit = async data => {
+      dataEdit.value = await load_finder(data)
+
       shouldShowEditTab.value = true
       changeTab('edit')
     }
@@ -125,6 +136,9 @@ export default {
       shouldShowEditTabRole,
       shouldShowEditTab,
       filteredTabs,
+      load_finder,
+      dataEdit,
+      reloadDataList,
     }
   },
 }
