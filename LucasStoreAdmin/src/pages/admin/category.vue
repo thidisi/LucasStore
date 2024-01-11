@@ -22,7 +22,7 @@
     <VDivider />
     <VWindow
       v-model="activeTab"
-      class="mt-5 disable-tab-transition"
+      class="mt-3 disable-tab-transition"
     >
       <VWindowItem
         v-for="item in filteredTabs"
@@ -31,7 +31,10 @@
       >
         <component
           :is="item.component"
+          :data-edit="dataEdit"
+          :reload-data="reloadDataList"
           @submit-success="handleSubmitSuccess"
+          @submit-show-edit="handleShowEdit"
         />
       </VWindowItem>
     </VWindow>
@@ -41,18 +44,23 @@
 <script>
 import { ref, computed } from 'vue'
 import FormCreate from '@/views/pages/admin/category/FormCreate.vue'
-import DataUserList from "@/views/pages/admin/user/DataUserList.vue"
+import FormUpdate from '@/views/pages/admin/category/FormUpdate.vue'
+import GetAllList from "@/views/pages/admin/category/GetAllList.vue"
+import GetAllCategory from '@/services/categories/GetAllCategory'
 import { useRoute } from 'vue-router'
 
 export default {
   components: {
     FormCreate,
-    DataUserList,
+    GetAllList,
+    FormUpdate,
   },
-  setup() {
+  setup(props, { emit }) {
+    const { load_finder } = GetAllCategory()
     
     const route = useRoute()
     const activeTab = ref(route.params.tab || 'list')
+    const dataEdit = ref(null)
 
     // tabs
     const tabs = [
@@ -60,7 +68,7 @@ export default {
         title: 'List',
         icon: 'bx-user',
         tab: 'list',
-        component: 'DataUserList',
+        component: 'GetAllList',
       },
       {
         title: 'Create',
@@ -72,20 +80,20 @@ export default {
         title: 'Edit',
         icon: 'bx-bell',
         tab: 'edit',
-        component: 'FormCreate',
+        component: 'FormUpdate',
       },
     ]
 
     const changeTab = tab => {
+      reloadDataList.value = false
       activeTab.value = tab
     }
 
-    // Middleware (ví dụ: ẩn tab "create" dựa trên điều kiện)
     const shouldShowCreateTabRole = ref(true)
     const shouldShowEditTabRole = ref(true)
-    const shouldShowEditTab = ref(true)
+    const shouldShowEditTab = ref(false)
 
-    // Filter tabs dựa trên điều kiện middleware
+    // Filter tabs to middleware
     const filteredTabs = computed(() => {
       return tabs.filter(item => {
         if(item.tab == 'create'){
@@ -103,9 +111,18 @@ export default {
       })
     })
 
+    const reloadDataList = ref(false)
 
     const handleSubmitSuccess  = () => {
       changeTab('list')
+      reloadDataList.value = true
+      shouldShowEditTab.value = false
+    }
+
+    const handleShowEdit = async data => {
+      dataEdit.value = await load_finder(data)
+      shouldShowEditTab.value = true
+      changeTab('edit')
     }
 
     return {
@@ -113,10 +130,14 @@ export default {
       tabs,
       changeTab,
       handleSubmitSuccess,
+      handleShowEdit,
       shouldShowCreateTabRole,
       shouldShowEditTabRole,
       shouldShowEditTab,
       filteredTabs,
+      load_finder,
+      dataEdit,
+      reloadDataList,
     }
   },
 }

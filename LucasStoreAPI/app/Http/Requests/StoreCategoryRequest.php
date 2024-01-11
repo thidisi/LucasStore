@@ -35,7 +35,6 @@ class StoreCategoryRequest extends FormRequest
                 'mimes:png,jpg,jpeg',
                 'max:2048',
             ],
-            'status' => ['in:active,inactive'],
             'major_category_id' => [
                 'required',
                 Rule::exists(Major_Category::class, 'id'),

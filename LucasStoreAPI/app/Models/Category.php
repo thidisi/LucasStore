@@ -51,6 +51,11 @@ class Category extends Model
         'updated_at' => 'date:d-m-Y'
     ];
 
+    const CATEGORY_STATUS = [
+        'ACTIVE' => 'active',
+        'INACTIVE' => 'inactive',
+    ];
+
     public function setNameAttribute($value)
     {
         $this->attributes['name'] = $value;
@@ -59,16 +64,29 @@ class Category extends Model
 
     protected static function booted(): void
     {
-        static::updated(static function (Category $category) {
-            cache()->forget('config_categories');
-            cache()->forget('config_category_' . $category->id);
+        static::created(static function (Category $category) {
+            static::clearCache($category);
         });
+
+        static::updated(static function (Category $category) {
+            static::clearCache($category);
+        });
+
+        static::deleted(static function (Category $category) {
+            static::clearCache($category);
+        });
+    }
+
+    private static function clearCache(Category $category): void
+    {
+        cache()->forget('config_categories');
+        cache()->forget('config_category_' . $category->id);
     }
 
     public static function getAndWithCache()
     {
         $json = cache()->remember('config_categories', self::ONE_MONTH, function () {
-            return self::query()->get()?->toJson();
+            return self::query()->with('major_category')->latest('created_at')->get()?->toJson();
         });
         return json_decode($json);
     }

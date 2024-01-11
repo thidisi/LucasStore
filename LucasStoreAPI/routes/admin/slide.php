@@ -15,9 +15,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')
     ->controller(SlideController::class)
     ->group(function () {
-        Route::resource('slides', SlideController::class)->only([
-            'edit', 'update', 'store', 'destroy'
+        Route::resource('slides', SlideController::class)->except([
+            'show'
         ]);
-        Route::get('slides', 'dataSlide');
         Route::post('slides/changeStatus/{id}', 'changStatus');
     });

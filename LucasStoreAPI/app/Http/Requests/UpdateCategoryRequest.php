@@ -36,7 +36,6 @@ class UpdateCategoryRequest extends FormRequest
                 'mimes:png,jpg,jpeg',
                 'max:2048',
             ],
-            'status' => ['required', 'in:active,inactive'],
             'major_category_id' => [
                 'required',
                 Rule::exists(Major_Category::class, 'id'),

@@ -1,13 +1,13 @@
 import axios from '@/plugins/axios'
 
-const GetAllSlider = () => {
-  const slider = ref([])  
+const GetAllMajorCategory = () => {
+  const major_category = ref([])  
   const error = ref(null)
 
   const load = async () => {
     try {
-      let response = await axios.get('/slides')
-      slider.value = response.data.slider
+      let response = await axios.get('/major_categories')
+      major_category.value = response.data.major_categories
     } catch (e) {
       error.value = e.message
       console.log(error.value)
@@ -16,7 +16,7 @@ const GetAllSlider = () => {
 
   const load_finder = async id => {
     try {
-      let response = await axios.get(`slides/${id}/edit`)
+      let response = await axios.get(`major_categories/${id}/edit`)
       
       return response.data
     } catch (e) {
@@ -26,7 +26,7 @@ const GetAllSlider = () => {
   }
 
   
-  return { slider, error, load, load_finder }
+  return { major_category, error, load, load_finder }
 }
 
-export default GetAllSlider
+export default GetAllMajorCategory

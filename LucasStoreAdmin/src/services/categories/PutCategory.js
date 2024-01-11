@@ -1,11 +1,11 @@
 import axios from '@/plugins/axios'
 
-const PutSlider = () => {
+const PutCategories = () => {
   const error = ref(null)
 
   const load = async (id, data) => {
     try {
-      let response = await axios.post(`slides/${id}`, data, {
+      let response = await axios.post(`categories/${id}`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -20,7 +20,7 @@ const PutSlider = () => {
 
   const destroy = async id => {
     try {
-      let response = await axios.delete(`slides/${id}`)
+      let response = await axios.delete(`categories/${id}`)
       
       return response.data
     } catch (e) {
@@ -31,7 +31,7 @@ const PutSlider = () => {
 
   const changStatus = async id => {
     try {
-      let response = await axios.post(`slides/changeStatus/${id}`)
+      let response = await axios.post(`categories/changeStatus/${id}`)
       
       return response.data
     } catch (e) {
@@ -43,4 +43,4 @@ const PutSlider = () => {
   return { error, load, destroy, changStatus }
 }
 
-export default PutSlider
+export default PutCategories

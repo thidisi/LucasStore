@@ -6,16 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use App\Models\Major_Category;
 use App\Services\CategoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
-    public function __construct(Category $category, CategoryService $categoryService)
+    public function __construct(Category $category, CategoryService $categoryService, Major_Category $majorCategory)
     {
         $this->category = $category;
         $this->categoryService = $categoryService;
+        $this->majorCategory = $majorCategory;
     }
     /**
      * Display a listing of the resource.
@@ -23,7 +25,11 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = $this->category->getAndWithCache();
-        return response()->json(['categories' => $categories], 200);
+        $menu = $this->majorCategory->getAndWithCache(Major_Category::MENU_STATUS['HOT_DEFAULT']);
+        return response()->json([
+            'categories' => $categories,
+            'menu' => $menu
+        ], 200);
     }
 
     /**
@@ -49,6 +55,26 @@ class CategoryController extends Controller
     {
         try {
             $category = $this->category->findAndWithCache($id);
+            $menu = $this->majorCategory->getAndWithCache(Major_Category::MENU_STATUS['HOT_DEFAULT']);
+            return response()->json([
+                'category' => $category,
+                'menu' => $menu,
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => config('const.message_error')], 403);
+        }
+    }
+
+    public function changStatus(string $id)
+    {
+        try {
+            $category = $this->category->findOrFail($id);
+            if ($category->status == Category::CATEGORY_STATUS['ACTIVE']) {
+                $category->status = Category::CATEGORY_STATUS['INACTIVE'];
+            } else {
+                $category->status = Category::CATEGORY_STATUS['ACTIVE'];
+            }
+            $category->save();
             return response()->json([
                 'category' => $category
             ], 200);
@@ -64,10 +90,8 @@ class CategoryController extends Controller
     {
         try {
             $category = $this->category->findOrFail($id);
-            $data = $request->all();
+            $data = $request->validated();
             $data['id'] = $id;
-            $data['avatar'] = $request->file('avatar');
-            $data['checkAvatar'] = $request->hasFile('avatar');
             $category = $this->categoryService->update($data);
             return response()->json([
                 'category' => $category,
@@ -83,8 +107,14 @@ class CategoryController extends Controller
     public function destroy(string $id)
     {
         try {
-            $this->category->destroy($id);
-            return response('Category deleted successfully.', 200);
+            $category = $this->category->findOrFail($id);
+            if ($category->avatar != null) {
+                if (Storage::disk('public')->exists($category->avatar)) {
+                    Storage::disk('public')->delete($category->avatar);
+                }
+            }
+            $category->delete();
+            return response()->json(['message' => config('const.message_success')], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => config('const.message_error')], 403);
         }

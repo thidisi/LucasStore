@@ -125,11 +125,11 @@
 </template>
 
 <script>
-import axios from '@/plugins/axios'
 import { useVuelidate } from '@vuelidate/core'
 import { minLength, required } from '@vuelidate/validators'
+import { allowedFileTypes, maxSize } from '@/validators'
 import { useStore } from 'vuex'
-import putSlider from '@/services/slider/putSlider'
+import PutSlider from '@/services/slider/PutSlider'
 
 export default {
   props: {
@@ -138,8 +138,9 @@ export default {
       default: null,
     },
   },
+  emits: ['submit-success'],
   setup(props, { emit }) {
-    const { load } = putSlider()
+    const { load } = PutSlider()
 
     const store = useStore()
     const refInputEl = ref()
@@ -147,7 +148,6 @@ export default {
     const responses = ref()
     const dataSorts = ref()
     const renderImg = ref()
-    const slider = ref()
 
     const form = ref({
       title: props.dataEdit.slide?.title,
@@ -167,6 +167,8 @@ export default {
           required,
         },
         image: {
+          allowedFileTypes: allowedFileTypes(['jpeg', 'png', 'jpg', 'gif']),
+          maxSize: maxSize(800 * 1024),
         },
         major_category_name: {
           required,
@@ -281,7 +283,6 @@ export default {
       response,
       dataSorts,
       loadData,
-      slider,
     }
   },
 }

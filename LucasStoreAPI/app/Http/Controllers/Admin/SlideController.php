@@ -24,7 +24,7 @@ class SlideController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function dataSlide()
+    public function index()
     {
         try {
             $sortOrder = Slide::SLIDE_ORDER;
@@ -45,7 +45,6 @@ class SlideController extends Controller
     public function store(StoreSlideRequest $request)
     {
         try {
-            dd(1);
             $data = $request->validated();
             $slides = $this->slideService->create($data);
             return response()->json(['slides', $slides], 200);

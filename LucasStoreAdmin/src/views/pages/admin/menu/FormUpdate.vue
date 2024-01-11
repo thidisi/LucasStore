@@ -53,20 +53,24 @@ import axios from '@/plugins/axios'
 import { useStore } from 'vuex'
 import { useVuelidate } from '@vuelidate/core'
 import { minLength, required } from '@vuelidate/validators'
-import PostMajorCategories from '@/services/major_categories/PostMajorCategory'
+import PutMajorCategories from '@/services/major_categories/PutMajorCategory'
 
 export default {
-  components: {
+  props: {
+    dataEdit: {
+      type: Object,
+      default: null,
+    },
   },
   emits: ['submit-success'],
   setup(props, { emit }) {
     const store = useStore()
 
-    const { load } = PostMajorCategories()
+    const { load } = PutMajorCategories()
 
     const form = ref({
-      name: '',
-      status: 'show',
+      name: props.dataEdit?.major_category.name,
+      status: props.dataEdit?.major_category.status,
     })
 
     const rules = computed(() => {
@@ -86,7 +90,8 @@ export default {
     const v$ = useVuelidate(rules, form)
 
     const resetForm = () => {
-      form.value.name = null
+      form.value.name = props.dataEdit?.major_category.name,
+      form.value.status = props.dataEdit?.major_category.status,
       v$.value.$reset()
     }
 
@@ -98,12 +103,14 @@ export default {
           isCreateButtonDisabled.value = true
 
           const { name, status } = form.value
+
           const formData = new FormData()
 
           formData.append('name', name)
           formData.append('status', status)
-          await load(formData)
+          formData.append('_method', 'PUT')
 
+          await load(props.dataEdit.major_category.id, formData)
           resetForm()
           // eslint-disable-next-line vue/custom-event-name-casing
           emit('submit-success')

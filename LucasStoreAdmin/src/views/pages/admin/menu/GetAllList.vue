@@ -5,36 +5,9 @@
       :headers="headers"
       :items="data"
       item-key="id"
-      item-value="title"
+      item-value="name"
       @reload-data="reloadData"
     >
-      <template #item.image="{ item }">
-        <VCard
-          class="my-2"
-          elevation="2"
-          rounded
-        >
-          <VImg
-            :src="'http://localhost:8000/storage/'+`${item.selectable.image}`"
-            height="64"
-            cover
-          />
-        </VCard>
-      </template>
-
-      <template #item.status="{ item }">
-        <div class="demo-space-x">
-          <VSwitch
-            :key="item.selectable.status"
-            v-model="item.selectable.status"
-            :value="item.selectable.status === 'active' ? 'active': 'close'"
-            :label="item.selectable.status === 'active' ? 'active': 'close'"
-            :color="item.selectable.status === 'active' ? 'success' : ''"
-            :disabled="item.selectable?.isButtonDisabled"  
-            @click="handleStatus(item)"
-          />
-        </div>
-      </template>
       <template #item.actions="{ item }">
         <VIcon
           size="small"
@@ -56,8 +29,8 @@
 </template>
 
 <script>
-import GetAllSlider from '@/services/slider/getAllSlider'
-import putSlider from '@/services/slider/putSlider'
+import GetAllMajorCategory from '@/services/major_categories/GetAllMajorCategory'
+import PutMajorCategories from '@/services/major_categories/PutMajorCategory'
 import { VDataTable } from 'vuetify/labs/VDataTable'
 
 export default {
@@ -65,8 +38,8 @@ export default {
   props: ['reload-data'],
   emits: ['submit-showEdit'],
   setup(props, { emit }) {
-    const { slider, load } = GetAllSlider()
-    const { changStatus, destroy } = putSlider()
+    const { major_category, load } = GetAllMajorCategory()
+    const { destroy } = PutMajorCategories()
     const isButtonDeleteDisabled = ref(true)
 
     onMounted(() => {
@@ -117,7 +90,7 @@ export default {
     }
 
     return {
-      slider,
+      major_category,
       editItem, 
       deleteItem,
       handleStatus,
@@ -131,26 +104,9 @@ export default {
           key: 'code',
         },
         {
-          title: 'Title',
+          title: 'name',
           align: 'center',
-          key: 'title',
-        },
-        {
-          title: 'Image',
-          align: 'center',
-          key: 'image',
-        },
-        {
-          title: 'Menu',
-          align: 'center',
-          sortable: false,
-          key: 'major_category',
-          value: item => `${item.major_category.name}`,
-        },
-        {
-          title: 'Sort Order',
-          align: 'center',
-          key: 'sort_order',
+          key: 'name',
         },
         {
           title: 'Status',
@@ -158,7 +114,7 @@ export default {
         },
         { title: 'Actions', key: 'actions', sortable: false },
       ],
-      data: slider,
+      data: major_category,
     }
   },
 }

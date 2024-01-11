@@ -16,4 +16,5 @@ Route::middleware('auth:api')
         Route::resource('categories', CategoryController::class)->except([
             'show'
         ]);
+        Route::post('categories/changeStatus/{id}', 'changStatus');
     });

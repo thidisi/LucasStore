@@ -28,7 +28,6 @@
       <VCardText class="d-flex">
         <!-- 👉 Avatar -->
         <VAvatar
-          v-if="form.avatar"
           rounded="lg"
           size="100"
           class="me-6"
@@ -98,9 +97,10 @@
       </VBtn>
 
       <VBtn
-        type="reset"
+        type="button"
         color="secondary"
         variant="tonal"
+        @click="resetForm"
       >
         Reset
       </VBtn>
@@ -109,18 +109,23 @@
 </template>
 
 <script>
+import axios from '@/plugins/axios'
 import { useStore } from 'vuex'
 import { useVuelidate } from '@vuelidate/core'
 import { minLength, required } from '@vuelidate/validators'
 import { allowedFileTypes, maxSize } from '@/validators'
-import PostCategories from '@/services/categories/PostCategory'
+import PutCategories from '@/services/categories/PutCategory'
 
 export default {
-  components: {
+  props: {
+    dataEdit: {
+      type: Object,
+      default: null,
+    },
   },
   emits: ['submit-success'],
   setup(props, { emit }) {
-    const { load, getMenu } = PostCategories()
+    const { load } = PutCategories()
 
     const store = useStore()
     const refInputEl = ref()
@@ -129,9 +134,9 @@ export default {
     const renderImg = ref()
 
     const form = ref({
-      name: '',
+      name: props.dataEdit.category?.name,
       avatar: null,
-      major_category_name: null,
+      major_category_name: props.dataEdit.category?.major_category.name,
     })
 
     const rules = computed(() => {
@@ -173,9 +178,10 @@ export default {
     }
 
     const resetForm = () => {
-      form.value.name = null
+      form.value.name = props.dataEdit.category?.name,
       form.value.avatar = null
-      form.value.major_category_name = null
+      form.value.major_category_name = props.dataEdit.category?.major_category.name,
+      renderImg.value = props.dataEdit.category.avatar ? 'http://localhost:8000/storage/' + props.dataEdit.category.avatar : null
       v$.value.$reset()
     }
 
@@ -188,13 +194,19 @@ export default {
 
           const { name, avatar, major_category_name } = form.value
           const major_category_id = responses.value.find(item => item.name === major_category_name).id
+
+
           const formData = new FormData()
 
           formData.append('name', name)
           formData.append('avatar', avatar ? avatar : '')
           formData.append('major_category_id', major_category_id)
-          await load(formData)
+          formData.append('_method', 'PUT')
+
+          await load(props.dataEdit.category.id, formData)
+
           resetForm()
+
           // eslint-disable-next-line vue/custom-event-name-casing
           emit('submit-success')
         }
@@ -211,16 +223,23 @@ export default {
 
     const loadData = async data => {
       try {
-        response.value = data.major_categories.map(item => item.name)
-        responses.value = data.major_categories.map(item => ({ id: item.id, name: item.name }))
+        response.value = data.menu.map(item => item.name)
+        responses.value = data.menu.map(item => ({ id: item.id, name: item.name }))
+
+        renderImg.value = data.category.avatar ? 'http://localhost:8000/storage/' + data.category.avatar : null
       } catch (error) {
         console.error('Error in onMounted:', error)
       }
     }
 
-    onMounted(async () => {
-      let menu = await getMenu()
-      loadData(menu)
+    onMounted(() => {
+      loadData(props.dataEdit)
+    })
+
+    watch(() => props.dataEdit, newValue => {
+      if (newValue) {
+        resetForm()
+      }
     })
 
     return {

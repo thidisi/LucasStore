@@ -125,15 +125,19 @@
 </template>
 
 <script>
-import axios from '@/plugins/axios'
+import PostSlider from '@/services/slider/PostSlider'
 import { useVuelidate } from '@vuelidate/core'
 import { minLength, required } from '@vuelidate/validators'
+import { allowedFileTypes, maxSize } from '@/validators'
 import { useStore } from 'vuex'
 
 export default {
   components: {
   },
+  emits: ['submit-success'],
   setup(props, { emit }) {
+    const { load, getMenu } = PostSlider()
+
     const store = useStore()
     const refInputEl = ref()
     const response = ref()
@@ -161,6 +165,8 @@ export default {
         },
         image: {
           required,
+          allowedFileTypes: allowedFileTypes(['jpeg', 'png', 'jpg', 'gif']),
+          maxSize: maxSize(800 * 1024),
         },
         major_category_name: {
           required,
@@ -219,13 +225,7 @@ export default {
           formData.append('image', image)
           formData.append('major_category_id', major_category_id)
           formData.append('sort_order', sort_order)
-
-          await axios.post('/slides', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          })
-
+          await load(formData)
           resetForm()
           // eslint-disable-next-line vue/custom-event-name-casing
           emit('submit-success')
@@ -241,26 +241,20 @@ export default {
 
     }
 
-    const loadData = async () => {
+    const loadData = async data => {
       try {
-        return await axios.get('/slides')
+        response.value = data.menu.map(item => item.name)
+        responses.value = data.menu.map(item => ({ id: item.id, name: item.name }))
+
+        dataSorts.value = Object.values(data.sortOrder)
       } catch (error) {
-        console.error('Error loading data:', error)
+        console.error('Error in onMounted:', error)
       }
     }
 
     onMounted(async () => {
-      try {
-        const api = await loadData()
-
-        response.value = api.data.menu.map(item => item.name)
-        responses.value = api.data.menu.map(item => ({ id: item.id, name: item.name }))
-
-        dataSorts.value = Object.values(api.data.sortOrder)
-        
-      } catch (error) {
-        console.error('Error in onMounted:', error)
-      }
+      let menu = await getMenu()
+      loadData(menu)
     })
 
     return {
@@ -286,9 +280,5 @@ export default {
   margin-top: 2px;
   margin-left: 4px;
   font-size: 0.9rem;
-}
-.v-avatar  {
-  background-image: url('http://localhost:5173/src/assets/images/avatars/avatar-1.png');
-  background-size: cover;
 }
 </style>

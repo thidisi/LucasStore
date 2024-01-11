@@ -45,14 +45,14 @@
 import { ref, computed } from 'vue'
 import FormCreate from '@/views/pages/admin/slide/FormCreate.vue'
 import FormUpdate from '@/views/pages/admin/slide/FormUpdate.vue'
-import GetAllSlide from "@/views/pages/admin/slide/GetAllSlide.vue"
-import GetAllSlider from '@/services/slider/getAllSlider'
+import GetAllList from "@/views/pages/admin/slide/GetAllList.vue"
+import GetAllSlider from '@/services/slider/GetAllSlider'
 import { useRoute } from 'vue-router'
 
 export default {
   components: {
     FormCreate,
-    GetAllSlide,
+    GetAllList,
     FormUpdate,
   },
   setup(props, { emit }) {
@@ -68,7 +68,7 @@ export default {
         title: 'List',
         icon: 'bx-user',
         tab: 'list',
-        component: 'GetAllSlide',
+        component: 'GetAllList',
       },
       {
         title: 'Create',
@@ -121,7 +121,6 @@ export default {
 
     const handleShowEdit = async data => {
       dataEdit.value = await load_finder(data)
-
       shouldShowEditTab.value = true
       changeTab('edit')
     }

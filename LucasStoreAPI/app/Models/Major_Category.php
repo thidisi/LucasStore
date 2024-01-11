@@ -63,10 +63,23 @@ class Major_Category extends Model
 
     protected static function booted(): void
     {
-        static::updated(static function (Major_Category $major_category) {
-            cache()->forget('config_major_categories');
-            cache()->forget('config_major_category_' . $major_category->id);
+        static::created(static function (Major_Category $major_category) {
+            static::clearCache($major_category);
         });
+
+        static::updated(static function (Major_Category $major_category) {
+            static::clearCache($major_category);
+        });
+
+        static::deleted(static function (Major_Category $major_category) {
+            static::clearCache($major_category);
+        });
+    }
+
+    private static function clearCache(Major_Category $major_category): void
+    {
+        cache()->forget('config_major_categories');
+        cache()->forget('config_major_category_' . $major_category->id);
     }
 
     public static function getAndWithCache($param = null)
@@ -74,9 +87,9 @@ class Major_Category extends Model
         $json = cache()->remember('config_major_categories', self::ONE_MONTH, function () use ($param) {
             // != Major_Category::MENU_STATUS['HOT_DEFAULT']
             if (isset($param)) {
-                return self::query()->where('status', '!=', $param)->get()?->toJson();
+                return self::query()->where('status', '!=', $param)->latest('created_at')->get()?->toJson();
             }
-            return self::query()->get()?->toJson();
+            return self::query()->latest('created_at')->get()?->toJson();
         });
         return json_decode($json);
     }
