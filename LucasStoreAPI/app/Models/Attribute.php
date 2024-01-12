@@ -56,8 +56,8 @@ class Attribute extends Model
         return $this->hasMany(AttributeValue::class, 'attribute_id');
     }
 
-    public static function replace()
+    public function replace()
     {
-        return self::hasMany(self::class, 'replace_id', 'id');
+        return $this->hasMany(self::class, 'replace_id', 'id');
     }
 }

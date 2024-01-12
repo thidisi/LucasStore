@@ -75,25 +75,10 @@ export default {
       load()
     }
 
-    const handleStatus = async item => {
-      try {
-        item.selectable.isButtonDisabled = true
-        await changStatus(item.selectable.id)
-        reloadData()
-      } catch (error) {
-        console.error('Error:', error)
-      } finally {
-        setTimeout(() => {
-          item.selectable.isButtonDisabled = false
-        }, 3000)
-      }
-    }
-
     return {
       major_category,
       editItem, 
       deleteItem,
-      handleStatus,
       reloadData,
       isButtonDeleteDisabled,
       itemsPerPage: 10,
@@ -107,6 +92,16 @@ export default {
           title: 'name',
           align: 'center',
           key: 'name',
+        },
+        {
+          title: 'descriptions',
+          align: 'center',
+          key: 'descriptions',
+        },
+        {
+          title: 'descriptions',
+          align: 'center',
+          key: 'descriptions',
         },
         {
           title: 'Status',

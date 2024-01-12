@@ -72,7 +72,7 @@ class AttributeService
      */
     private function updateByParams($params): Attribute
     {
-        $attribute = $this->attribute->findOrFail($params['id']);
+        $attribute = $this->attribute->whereSlug($params['slug'])->firstOrFail();
         $attribute->update($params);
         return $attribute;
     }

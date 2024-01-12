@@ -21,16 +21,16 @@ class AttributeController extends Controller
      */
     public function index()
     {
-        try {
-            $attr = $this->attribute->latest('created_at')->get();
+        // try {
+            $attr = $this->attribute->with(['attribute_value','replace'])->latest('created_at')->get();
             $attrValue = $this->attributeValue->with('attribute')->latest('created_at')->get();
             return response()->json([
                 'attr' => $attr,
                 'attrValue' => $attrValue,
             ], 200);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => config('const.message_error')], 403);
-        }
+        // } catch (\Throwable $th) {
+        //     return response()->json(['message' => config('const.message_error')], 403);
+        // }
     }
 
     /**
@@ -57,16 +57,16 @@ class AttributeController extends Controller
      */
     public function storeWithAttr(Request $request)
     {
-        try {
-            $data = $request->validated();
-            $attr = $this->attributeService->create($data);
+        // try {
+        $data = $request->all();
+        $attr = $this->attributeService->create($data);
 
-            return response()->json([
-                'attr' => $attr,
-            ], 200);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => config('const.message_error')], 403);
-        }
+        return response()->json([
+            'attr' => $attr,
+        ], 200);
+        // } catch (\Throwable $th) {
+        //     return response()->json(['message' => config('const.message_error')], 403);
+        // }
     }
 
     /**
@@ -76,24 +76,61 @@ class AttributeController extends Controller
     {
         try {
             $data = $request->validated();
-            $attr = $this->attributeService->createWithAttrValue($data);
+            $attrValue = $this->attributeService->createWithAttrValue($data);
 
             return response()->json([
-                'attr' => $attr,
+                'attrValue' => $attrValue,
             ], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => config('const.message_error')], 403);
         }
     }
 
+
+    /**
+     * Display the specified resource.
+     */
+    public function editWithAttr(string $slug)
+    {
+        // try {
+            $attribute = $this->attribute->whereSlug($slug)->firstOrFail();
+            $replace = $this->attribute->whereNull('replace_id')->get();
+            return response()->json([
+                'each' => $attribute,
+                'replace' => $replace,
+            ], 200);
+        // } catch (\Throwable $th) {
+        //     return response()->json(['message' => config('const.message_error')], 403);
+        // }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function editWithAttrValue(string $id)
+    {
+        try {
+            $attributeValue = $this->attributeValue->findOrFail($id);
+            $replace = $this->attribute->whereNull('replace_id')->get();
+            return response()->json([
+                'each' => $attributeValue,
+                'replace' => $replace,
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => config('const.message_error')], 403);
+        }
+    }
+
+
     /**
      * Update the specified resource in storage.
      */
-    public function updateWithAttr(Request $request, string $id)
+    public function updateWithAttr(Request $request, string $slug)
     {
         try {
-            $attr = $this->attribute->findOrFail($id);
+            $attr = $this->attribute->whereSlug($slug)->firstOrFail();
             $data = $request->validated();
+            $data['slug'] = $slug;
             $attr = $this->attributeService->update($data);
             return response()->json([
                 'attr' => $attr,
@@ -111,6 +148,7 @@ class AttributeController extends Controller
         try {
             $attrValue = $this->attributeValue->findOrFail($id);
             $data = $request->validated();
+            $data['id'] = $id;
             $attrValue = $this->attributeService->updateWithAttrValue($data);
             return response()->json([
                 'attrValue' => $attrValue,

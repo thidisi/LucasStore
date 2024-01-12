@@ -127,7 +127,7 @@ const router = createRouter({
         {
           path: "attributes",
           name: "attributes",
-          component: () => import("../pages/admin/user.vue"),
+          component: () => import("../pages/admin/attribute.vue"),
           meta: { title: "Attribute", requiresAuth: true },
         },
         {
