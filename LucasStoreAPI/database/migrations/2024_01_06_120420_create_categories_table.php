@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->uuid('id')->primary()->index()->comment('UUID generated automatically in code');
-            $table->foreignUuid('major_category_id')->constrained();
+            $table->foreignUuid('major_category_id')->constrained()->onDelete('cascade');
             $table->string('name')->unique();
             $table->text('slug');
             $table->text('avatar', 255)->nullable();

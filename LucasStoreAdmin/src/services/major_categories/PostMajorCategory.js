@@ -5,7 +5,7 @@ const PostMajorCategories = () => {
 
   const load = async data => {
     try {
-      let response = await axios.post('/major_categories', data)
+      let response = await axios.post(`major_categories`, data)
       
       return response.data
     } catch (e) {

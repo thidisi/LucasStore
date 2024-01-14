@@ -18,7 +18,7 @@ class CreateSlideTable extends Migration
             $table->string('title', 200);
             $table->string('slug');
             $table->text('image');
-            $table->foreignUuid('major_category_id')->constrained();
+            $table->foreignUuid('major_category_id')->constrained()->onDelete('cascade');
             $table->enum('sort_order', [
                 'slider',
                 'instagram',

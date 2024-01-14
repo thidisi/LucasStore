@@ -26,6 +26,7 @@ class CreateTicketsTable extends Migration
                 'suspended',
             ])->default('active');
             $table->timestamps();
+            $table->softDeletes();
         });
         // Auto-incremented code with unique constraint
         \DB::statement('ALTER Table tickets add code INTEGER UNSIGNED NOT NULL UNIQUE AUTO_INCREMENT;');

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProductionAttributeValueTable extends Migration
+class CreateProductionAttributesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreateProductionAttributeValueTable extends Migration
      */
     public function up()
     {
-        Schema::create('production_attr_value', function (Blueprint $table) {
+        Schema::create('production_attributes', function (Blueprint $table) {
             $table->foreignUuid('production_id')->constrained();
-            $table->foreignUuid('attribute_value_id')->constrained();
-            $table->primary(['production_id', 'attribute_value_id']);
+            $table->foreignUuid('setting_id')->constrained();
+            $table->primary(['production_id', 'setting_id']);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -29,6 +29,6 @@ class CreateProductionAttributeValueTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('production_attr_value');
+        Schema::dropIfExists('production_attributes');
     }
 }

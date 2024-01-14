@@ -6,7 +6,7 @@ const getAllCategory = () => {
 
   const load = async () => {
     try {
-      let response = await axios.get('/categories')
+      let response = await axios.get(`categories`)
       categories.value = response.data.categories
     } catch (e) {
       error.value = e.message

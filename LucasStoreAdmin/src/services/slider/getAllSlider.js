@@ -6,7 +6,7 @@ const GetAllSlider = () => {
 
   const load = async () => {
     try {
-      let response = await axios.get('/slides')
+      let response = await axios.get(`slides`)
       slider.value = response.data.slider
     } catch (e) {
       error.value = e.message

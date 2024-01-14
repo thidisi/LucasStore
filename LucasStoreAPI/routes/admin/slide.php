@@ -18,5 +18,5 @@ Route::middleware('auth:api')
         Route::resource('slides', SlideController::class)->except([
             'show'
         ]);
-        Route::post('slides/changeStatus/{id}', 'changStatus');
+        Route::post('slides/changeStatus/{id}', 'changeStatus');
     });

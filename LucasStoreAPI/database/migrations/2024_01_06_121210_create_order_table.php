@@ -15,8 +15,8 @@ class CreateOrderTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary()->index()->comment('UUID generated automatically in code');
-            $table->foreignUuid('user_id')->constrained();
-            $table->foreignUuid('ticket_id')->nullable()->constrained();
+            $table->foreignUuid('user_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('ticket_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('name_receiver', 100);
             $table->string('phone_receiver', 15);
             $table->string('address_receiver');

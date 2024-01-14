@@ -2,36 +2,48 @@
 
 namespace App\Models;
 
+use App\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Attribute extends Model
+class Setting extends Model
 {
-    use HasFactory, SoftDeletes;
-
+    use HasFactory, Uuid;
 
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'attributes';
+    protected $table = 'settings';
 
     protected $fillable = [
         'id',
         'name',
+        'type',
         'slug',
-        'descriptions',
+        'image_path',
+        'price_type',
+        'production_id',
+        'parent_id',
         'status',
-        'replace_id',
     ];
 
-    const ATTRIBUTE_STATUS = [
+    const SETTING_STATUS = [
         'ACTIVE' => 'active',
         'INACTIVE' => 'inactive',
     ];
+
+    const SETTING_TYPE = [
+        'SIZE' => 'size',
+        'COLOR' => 'color',
+        'IMAGE' => 'image',
+    ];
+
+    protected $keyType = 'uuid';
+
+    public $incrementing = false;
 
     public $timestamps = true;
 
@@ -51,13 +63,13 @@ class Attribute extends Model
         $this->attributes['slug'] = Str::slug($value);
     }
 
-    public function attribute_value()
+    public function children()
     {
-        return $this->hasMany(AttributeValue::class, 'attribute_id');
+        return $this->hasMany(self::class, 'parent_id', 'id');
     }
 
-    public function replace()
+    public function parent()
     {
-        return $this->hasMany(self::class, 'replace_id', 'id');
+        return $this->belongsTo(self::class, 'parent_id');
     }
 }

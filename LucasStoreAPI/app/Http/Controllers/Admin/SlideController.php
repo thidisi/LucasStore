@@ -47,7 +47,7 @@ class SlideController extends Controller
         try {
             $data = $request->validated();
             $slides = $this->slideService->create($data);
-            return response()->json(['slides', $slides], 200);
+            return response()->json(['slides' => $slides], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => config('const.message_error')], 403);
         }
@@ -82,13 +82,13 @@ class SlideController extends Controller
             $data = $request->validated();
             $data['id'] = $id;
             $slide = $this->slideService->update($data);
-            return response()->json(['slide', $slide], 200);
+            return response()->json(['slide' => $slide], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => config('const.message_error')], 403);
         }
     }
 
-    public function changStatus(string $id)
+    public function changeStatus(string $id)
     {
         try {
             $slide = $this->slide->findOrFail($id);
@@ -98,7 +98,7 @@ class SlideController extends Controller
                 $slide->status = Slide::SLIDE_STATUS['ACTIVE'];
             }
             $slide->save();
-            return response()->json(['slide', $slide], 200);
+            return response()->json(['slide' => $slide], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => config('const.message_error')], 403);
         }

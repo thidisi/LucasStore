@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
                 'id' => (string)\Str::uuid(),
                 'name' => 'admin',
                 'email' => 'admin@gmail.com',
-                'password' => '$2y$10$4Qi7YDnqmz5W4xzJlENTa.0olHCFguwsc4233HCDlcKXGt25fB9hm$2y$10$dfqoMOYSiFUmmkPYOwZq1uEnxsVJSNgRmj/RoykBQo7j5ytirvfCG',
+                'password' => '$2y$10$dfqoMOYSiFUmmkPYOwZq1uEnxsVJSNgRmj/RoykBQo7j5ytirvfCG',
                 'last_login' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),

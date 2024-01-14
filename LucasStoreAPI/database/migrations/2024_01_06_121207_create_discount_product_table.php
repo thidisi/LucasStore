@@ -14,9 +14,9 @@ class CreateDiscountProductTable extends Migration
     public function up()
     {
         Schema::create('discount_product', function (Blueprint $table) {
-            $table->id();
             $table->foreignUuid('production_id')->constrained();
             $table->foreignUuid('discount_id')->constrained();
+            $table->primary(['discount_id', 'production_id']);
             $table->timestamps();
         });
     }

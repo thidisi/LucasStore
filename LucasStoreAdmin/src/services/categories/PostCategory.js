@@ -5,7 +5,7 @@ const PostCategories = () => {
 
   const load = async data => {
     try {
-      let response = await axios.post('/categories', data, {
+      let response = await axios.post(`categories`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -20,7 +20,7 @@ const PostCategories = () => {
 
   const getMenu = async () => {
     try {
-      let response = await axios.get('/major_categories')
+      let response = await axios.get(`major_categories`)
       
       return response.data
     } catch (e) {

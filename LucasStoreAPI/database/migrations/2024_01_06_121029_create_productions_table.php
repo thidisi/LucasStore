@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('productions', function (Blueprint $table) {
             $table->uuid('id')->primary()->index()->comment('UUID generated automatically in code');
-            $table->foreignUuid('category_id')->constrained();
+            $table->foreignUuid('category_id')->constrained()->onDelete('cascade');
             $table->string('name', 255);
             $table->float('price');
             $table->integer('quantity');

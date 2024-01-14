@@ -44,12 +44,44 @@
           mdi-pencil
         </VIcon>
         <VIcon
-          v-if="isButtonDeleteDisabled"
           size="small"  
           @click="deleteItem(item)"
         >
           mdi-delete
         </VIcon>
+      </template>
+
+      <template #top>
+        <VSpacer />
+        <VDialog
+          v-model="dialogDelete"
+          max-width="500px"
+        >
+          <VCard>
+            <VCardTitle class="text-h5">
+              Are you sure you want to delete this item?
+            </VCardTitle>
+            <VCardActions>
+              <VSpacer />
+              <VBtn
+                color="blue darken-1"
+                text
+                @click="closeDelete"
+              >
+                Cancel
+              </VBtn>
+              <VBtn
+                color="blue darken-1"
+                text
+                :disabled="!isButtonDisabled"
+                @click="deleteConfirm(id)"
+              >
+                OK
+              </VBtn>
+              <VSpacer />
+            </VCardActions>
+          </VCard>
+        </VDialog>
       </template>
     </VDataTable>
   </div>
@@ -67,7 +99,9 @@ export default {
   setup(props, { emit }) {
     const { categories, load } = GetAllCategory()
     const { changStatus, destroy } = PutCategory()
-    const isButtonDeleteDisabled = ref(true)
+    const dialogDelete = ref(false)
+    const id = ref()
+    const isButtonDisabled = ref(true)
 
     onMounted(() => {
       load()
@@ -85,15 +119,25 @@ export default {
     }
 
     const deleteItem = async item => {
+      dialogDelete.value = true
+      id.value = item.selectable?.id
+    }
+
+    const closeDelete = () => {
+      dialogDelete.value = false
+    }
+
+    const deleteConfirm = async id => {
       try {
-        isButtonDeleteDisabled.value = false
-        await destroy(item.selectable.id)
+        isButtonDisabled.value = false
+        dialogDelete.value = false
+        await destroy(id)
         reloadData()
       } catch (error) {
         console.error('Error:', error)
       } finally {
         setTimeout(() => {
-          isButtonDeleteDisabled.value = true
+          isButtonDisabled.value = true
         }, 1000)
       }
     }
@@ -119,10 +163,14 @@ export default {
     return {
       categories,
       editItem, 
+      id,
+      dialogDelete,
       deleteItem,
+      deleteConfirm,
+      closeDelete,
       handleStatus,
       reloadData,
-      isButtonDeleteDisabled,
+      isButtonDisabled,
       itemsPerPage: 10,
       headers: [
         {

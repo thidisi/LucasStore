@@ -6,7 +6,7 @@ const GetAllMajorCategory = () => {
 
   const load = async () => {
     try {
-      let response = await axios.get('/major_categories')
+      let response = await axios.get(`major_categories`)
       major_category.value = response.data.major_categories
     } catch (e) {
       error.value = e.message

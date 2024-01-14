@@ -14,8 +14,8 @@ class CreateProductionCommentsTable extends Migration
     public function up()
     {
         Schema::create('production_comments', function (Blueprint $table) {
-            $table->foreignId('comment_id')->constrained();
-            $table->foreignUuid('production_id')->constrained();
+            $table->foreignId('comment_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('production_id')->constrained()->onDelete('cascade');
             $table->primary(['comment_id', 'production_id']);
             $table->integer('review')->nullable();
             $table->text('images')->nullable();

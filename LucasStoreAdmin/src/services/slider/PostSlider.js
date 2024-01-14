@@ -5,7 +5,7 @@ const PostSlider = () => {
 
   const load = async data => {
     try {
-      let response = await axios.post('/slides', data, {
+      let response = await axios.post(`slides`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -20,7 +20,7 @@ const PostSlider = () => {
 
   const getMenu = async () => {
     try {
-      let response = await axios.get('/slides')
+      let response = await axios.get(`slides`)
       
       return response.data
     } catch (e) {

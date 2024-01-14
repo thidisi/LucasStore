@@ -14,11 +14,11 @@ class CreateOrderDetailTable extends Migration
     public function up()
     {
         Schema::create('order_detail', function (Blueprint $table) {
-            $table->foreignUuid('order_id')->constrained();
-            $table->foreignUuid('production_id')->constrained();
+            $table->foreignUuid('order_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('production_id')->constrained()->onDelete('cascade');
             $table->primary(['production_id', 'order_id']);
             $table->integer('quantity');
-            $table->string('attr', 255);
+            $table->text('attribute');
             $table->timestamps();
             $table->softDeletes();
         });

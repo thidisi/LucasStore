@@ -12,14 +12,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')
     ->controller(AttributeController::class)
     ->group(function () {
-        Route::get('attributes', 'index');
-        Route::post('attributes', 'storeWithAttr');
-        Route::get('attributes/{slug}/edit', 'editWithAttr');
-        Route::put('attributes/{slug}/edit', 'updateWithAttr');
-        Route::get('attributes/data', 'dataAttr');
-        Route::post('attribute-values', 'storeWithAttrValue');
-        Route::get('attribute-values/{id}/edit', 'editWithAttrValue');
-        Route::put('attribute-values/{id}/edit', 'updateWithAttrValue');
-        // Route::delete('attributes/{id}', 'destroyWithAttr');
-        // Route::delete('attribute-values/{id}', 'destroyWithAttrVaLue');
+        Route::resource('attributes', AttributeController::class)->except([
+            'show',
+        ]);
+        Route::post('attributes/changeStatus/{id}', 'changeStatus');
     });
