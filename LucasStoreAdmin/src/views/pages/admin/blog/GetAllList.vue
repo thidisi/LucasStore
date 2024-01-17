@@ -87,8 +87,8 @@
 </template>
 
 <script>
-import GetAllSlider from '@/services/slider/GetAllSlider'
-import PutSlider from '@/services/slider/PutSlider'
+import GetAllBlog from '@/services/blogs/GetAllBlog'
+import PutBlog from '@/services/blogs/PutBlog'
 import { VDataTable } from 'vuetify/labs/VDataTable'
 
 export default {
@@ -96,8 +96,8 @@ export default {
   props: ['reload-data'],
   emits: ['submit-showEdit'],
   setup(props, { emit }) {
-    const { slider, load } = GetAllSlider()
-    const { changStatus, destroy } = PutSlider()
+    const { blogs, load } = GetAllBlog()
+    const { changStatus, destroy } = PutBlog()
     const isButtonDisabled = ref(true)
     const dialogDelete = ref(false)
     const id = ref()
@@ -163,7 +163,7 @@ export default {
 
     return {
       urlImage,
-      slider,
+      blogs,
       editItem, 
       id,
       dialogDelete,
@@ -191,16 +191,9 @@ export default {
           key: 'image',
         },
         {
-          title: 'Menu',
+          title: 'View',
           align: 'center',
-          sortable: false,
-          key: 'major_category',
-          value: item => `${item.major_category?.name}`,
-        },
-        {
-          title: 'Sort Order',
-          align: 'center',
-          key: 'sort_order',
+          key: 'count_view',
         },
         {
           title: 'Status',
@@ -208,7 +201,7 @@ export default {
         },
         { title: 'Actions', key: 'actions', sortable: false },
       ],
-      data: slider,
+      data: blogs,
     }
   },
 }

@@ -14,3 +14,12 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+.text-danger {
+  color:red;
+  margin-top: 2px;
+  margin-left: 4px;
+  font-size: 0.8rem;
+}
+</style>

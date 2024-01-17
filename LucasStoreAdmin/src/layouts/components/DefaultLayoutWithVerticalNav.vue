@@ -102,6 +102,13 @@ const upgradeBanner = computed(() => {
       />
       <VerticalNavLink
         :item="{
+          title: 'Blog',
+          icon: 'bx-user-plus',
+          to: '/admin/blogs',
+        }"
+      />
+      <VerticalNavLink
+        :item="{
           title: 'Category',
           icon: 'bx-user-plus',
           to: '/admin/categories',
@@ -146,6 +153,13 @@ const upgradeBanner = computed(() => {
       <VerticalNavSectionTitle
         :item="{
           heading: 'Setting',
+        }"
+      />
+      <VerticalNavLink
+        :item="{
+          title: 'About',
+          icon: 'bx-user-plus',
+          to: '/admin/about',
         }"
       />
       <VerticalNavLink

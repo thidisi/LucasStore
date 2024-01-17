@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Major_Category;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCategoryRequest extends FormRequest
+class StoreBlogRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,21 +22,19 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => [
+            'title' => [
                 'required',
-                'unique:categories,name',
+                'unique:blogs,title',
                 'string',
-                'min:2',
-                'max:50',
+                'max:150',
             ],
-            'avatar' => [
-                'nullable',
+            'image' => [
+                'required',
                 'mimes:png,jpg,jpeg',
                 'max:2048',
             ],
-            'major_category_id' => [
+            'content' => [
                 'required',
-                Rule::exists(Major_Category::class, 'id'),
             ],
         ];
     }

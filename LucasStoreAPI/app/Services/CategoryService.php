@@ -43,7 +43,7 @@ class CategoryService
      */
     private function createByParams($params): Category
     {
-        if (is_uploaded_file($params['avatar'])) {
+        if (isset($params['avatar']) && is_uploaded_file($params['avatar'])) {
             $image_path = Storage::disk('public')->put('avatarCategories', $params['avatar']);
             $params['avatar'] = $image_path;
         }
@@ -77,7 +77,7 @@ class CategoryService
     private function updateByParams($params): Category
     {
         $category = $this->category->findOrFail($params['id']);
-        if (is_uploaded_file($params['avatar'])) {
+        if (isset($params['avatar']) && is_uploaded_file($params['avatar'])) {
             $images = $params['avatar'];
             if ($category->avatar != null) {
                 if (Storage::disk('public')->exists($category->avatar)) {

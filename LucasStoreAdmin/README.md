@@ -40,3 +40,5 @@ npm install vuex --save
 npm i bootstrap@v5.3.2
 npm i datatables.net-vue3 datatables.net-bs5 datatables.net-buttons-bs5 datatables.net-responsive-bs5
 npm i bootstrap-vue bootstrap
+### Load environment variables from .env
+npm install dotenv --save-dev

@@ -15,7 +15,7 @@
           rounded
         >
           <VImg
-            :src="'http://localhost:8000/storage/'+`${item.selectable.avatar}`"
+            :src="urlImage+`${item.selectable.avatar}`"
             height="64"
             cover
           />
@@ -103,6 +103,8 @@ export default {
     const id = ref()
     const isButtonDisabled = ref(true)
 
+    const urlImage = import.meta.env.VITE_API_URL_IMAGE
+
     onMounted(() => {
       load()
     })
@@ -161,6 +163,7 @@ export default {
     }
 
     return {
+      urlImage,
       categories,
       editItem, 
       id,

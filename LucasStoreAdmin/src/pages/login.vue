@@ -212,10 +212,4 @@ export default {
 
 <style lang="scss">
 @use "@core/scss/template/pages/page-auth.scss";
-.text-danger {
-  color:red;
-  margin-top: 2px;
-  margin-left: 4px;
-  font-size: 0.9rem;
-}
 </style>

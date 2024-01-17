@@ -109,12 +109,11 @@
 </template>
 
 <script>
-import axios from '@/plugins/axios'
-import { useStore } from 'vuex'
+import PutCategories from '@/services/categories/PutCategory'
+import { allowedFileTypes, maxSize } from '@/validators'
 import { useVuelidate } from '@vuelidate/core'
 import { minLength, required } from '@vuelidate/validators'
-import { allowedFileTypes, maxSize } from '@/validators'
-import PutCategories from '@/services/categories/PutCategory'
+import { useStore } from 'vuex'
 
 export default {
   props: {
@@ -132,6 +131,8 @@ export default {
     const response = ref()
     const responses = ref()
     const renderImg = ref()
+
+    const urlImage = import.meta.env.VITE_API_URL_IMAGE
 
     const form = ref({
       name: props.dataEdit.category?.name,
@@ -181,7 +182,7 @@ export default {
       form.value.name = props.dataEdit.category?.name,
       form.value.avatar = null
       form.value.major_category_name = props.dataEdit.category?.major_category.name,
-      renderImg.value = props.dataEdit.category.avatar ? 'http://localhost:8000/storage/' + props.dataEdit.category.avatar : null
+      renderImg.value = props.dataEdit.category.avatar ? urlImage + props.dataEdit.category.avatar : null
       v$.value.$reset()
     }
 
@@ -226,7 +227,7 @@ export default {
         response.value = data.menu.map(item => item.name)
         responses.value = data.menu.map(item => ({ id: item.id, name: item.name }))
 
-        renderImg.value = data.category.avatar ? 'http://localhost:8000/storage/' + data.category.avatar : null
+        renderImg.value = data.category.avatar ? urlImage + data.category.avatar : null
       } catch (error) {
         console.error('Error in onMounted:', error)
       }
@@ -243,6 +244,7 @@ export default {
     })
 
     return {
+      urlImage,
       form,
       handleSubmit,
       v$,
@@ -257,12 +259,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss">
-.text-danger {
-  color:red;
-  margin-top: 2px;
-  margin-left: 4px;
-  font-size: 0.9rem;
-}
-</style>

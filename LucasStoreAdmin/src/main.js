@@ -25,3 +25,4 @@ app.use(store)
 
 // Mount vue app
 app.mount("#app")
+

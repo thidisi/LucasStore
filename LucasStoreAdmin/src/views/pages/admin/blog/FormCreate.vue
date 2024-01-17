@@ -2,6 +2,22 @@
   <VForm @submit.prevent="handleSubmit">
     <VRow>
       <VCol cols="6">
+        <QuillEditor
+          ref="quill"
+          v-model:content="form.content"
+          content-type="html"
+          theme="snow"
+        />
+        <span
+          v-for="error in v$.content.$errors"
+          :key="error.$uid"
+          class="text-danger"
+        >
+          {{ error.$message }}
+        </span>
+      </VCol>
+
+      <VCol cols="6">
         <VTextField
           v-model="form.title"
           label="Slide title"
@@ -10,39 +26,14 @@
         />
       </VCol>
 
-      <VCol cols="6">
-        <VSelect
-          v-model="form.major_category_name"
-          label="Choose Major category"
-          :items="response"
-          placeholder="Select"
-          :rules="v$.major_category_name.required.$invalid ? [v$.major_category_name.required.$message] : ''"
-        />
-      </VCol>
-
-      <VCol cols="6">
-        <VTextField
-          v-model="form.slug"
-          label="Slide slug"
-          placeholder=""
-          :rules="v$.slug.required.$invalid ? [v$.slug.required.$message] : ''"
-        />
-      </VCol>
-
-      <VCol cols="6">
-        <VSelect
-          v-model="form.sort_order"
-          label="Choose Sort Order"
-          :items="dataSorts"
-          placeholder="Select"
-          :rules="v$.sort_order.required.$invalid ? [v$.sort_order.required.$message] : ''"
-        />
-      </VCol>
-
-      <VCol>
+      <VCol
+        cols="6"
+        class="mt-4"
+      >
         <VCardText class="d-flex">
           <!-- 👉 Image -->
           <VAvatar
+            v-if="form.image"
             rounded="lg"
             size="100"
             class="me-6"
@@ -112,7 +103,7 @@
         </VBtn>
 
         <VBtn
-          type="button"
+          type="reset"
           color="secondary"
           variant="tonal"
           @click="resetForm"
@@ -125,38 +116,33 @@
 </template>
 
 <script>
-import PutSlider from '@/services/slider/PutSlider'
-import { allowedFileTypes, maxSize } from '@/validators'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
+import PostBlog from '@/services/blogs/PostBlog'
 import { useVuelidate } from '@vuelidate/core'
 import { minLength, required } from '@vuelidate/validators'
-import { useStore } from 'vuex'
+import { allowedFileTypes, maxSize } from '@/validators'
 
 export default {
-  props: {
-    dataEdit: {
-      type: Object,
-      default: null,
-    },
+  components: {
+    QuillEditor,
   },
   emits: ['submit-success'],
   setup(props, { emit }) {
-    const { load } = PutSlider()
+    const { load } = PostBlog()
 
-    const store = useStore()
     const refInputEl = ref()
-    const response = ref()
-    const responses = ref()
-    const dataSorts = ref()
+    const quill = ref(null)
     const renderImg = ref()
 
-    const urlImage = import.meta.env.VITE_API_URL_IMAGE
+    const editorOption = {
+      theme: 'snow',
+    }
 
     const form = ref({
-      title: props.dataEdit.slide?.title,
-      slug: props.dataEdit.slide?.slug,
+      title: '',
       image: null,
-      major_category_name: props.dataEdit.slide?.major_category.name,
-      sort_order: props.dataEdit.slide?.sort_order,
+      content: null,
     })
 
     const rules = computed(() => {
@@ -165,17 +151,12 @@ export default {
           required,
           minLength: minLength(4),
         },
-        slug: {
-          required,
-        },
         image: {
+          required,
           allowedFileTypes: allowedFileTypes(['jpeg', 'png', 'jpg', 'gif']),
           maxSize: maxSize(800 * 1024),
         },
-        major_category_name: {
-          required,
-        },
-        sort_order: {
+        content: {
           required,
         },
       }
@@ -204,12 +185,10 @@ export default {
     }
 
     const resetForm = () => {
-      form.value.title = props.dataEdit.slide?.title
-      form.value.slug = props.dataEdit.slide?.slug,
+      form.value.title = ''
       form.value.image = null
-      form.value.major_category_name = props.dataEdit.slide?.major_category.name,
-      form.value.sort_order = props.dataEdit.slide?.sort_order,
-      renderImg.value = props.dataEdit.slide.image ? urlImage + props.dataEdit.slide.image : null
+      form.value.content = null
+      quill.value.setContents('')
       v$.value.$reset()
     }
 
@@ -220,22 +199,15 @@ export default {
         if (checkValid) {
           isCreateButtonDisabled.value = true
 
-          const { title, slug, image, major_category_name, sort_order } = form.value
-          const major_category_id = responses.value.find(item => item.name === major_category_name).id
+          const { title, image, content } = form.value
 
           const formData = new FormData()
 
           formData.append('title', title)
-          formData.append('slug', slug)
-          formData.append('image', image ? image : '')
-          formData.append('major_category_id', major_category_id)
-          formData.append('sort_order', sort_order)
-          formData.append('_method', 'PUT')
-
-          await load(props.dataEdit.slide.id, formData)
-
+          formData.append('image', image)
+          formData.append('content', content)
+          await load(formData)
           resetForm()
-
           // eslint-disable-next-line vue/custom-event-name-casing
           emit('submit-success')
         }
@@ -250,42 +222,18 @@ export default {
 
     }
 
-    const loadData = async data => {
-      try {
-        response.value = data.menu.map(item => item.name)
-        responses.value = data.menu.map(item => ({ id: item.id, name: item.name }))
-
-        dataSorts.value = Object.values(data.sortOrder)
-        renderImg.value = data.slide.image ? urlImage + data.slide.image : null
-      } catch (error) {
-        console.error('Error in onMounted:', error)
-      }
-    }
-
-    onMounted(() => {
-      loadData(props.dataEdit)
-    })
-
-    watch(() => props.dataEdit, newValue => {
-      if (newValue) {
-        resetForm()
-      }
-    })
-
     return {
-      urlImage,
       form,
       handleSubmit,
       v$,
       isCreateButtonDisabled,
       resetForm,
       refInputEl,
+      quill,
       handleFileChange,
-      renderImg,
       resetImage,
-      response,
-      dataSorts,
-      loadData,
+      renderImg,
+      editorOption,
     }
   },
 }

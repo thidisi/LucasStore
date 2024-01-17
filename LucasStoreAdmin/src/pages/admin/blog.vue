@@ -43,10 +43,10 @@
 
 <script>
 import { ref, computed } from 'vue'
-import FormCreate from '@/views/pages/admin/slide/FormCreate.vue'
-import FormUpdate from '@/views/pages/admin/slide/FormUpdate.vue'
-import GetAllList from "@/views/pages/admin/slide/GetAllList.vue"
-import GetAllSlider from '@/services/slider/GetAllSlider'
+import FormCreate from '@/views/pages/admin/blog/FormCreate.vue'
+import FormUpdate from '@/views/pages/admin/blog/FormUpdate.vue'
+import GetAllList from "@/views/pages/admin/blog/GetAllList.vue"
+import GetAllBlog from '@/services/blogs/GetAllBlog'
 import { useRoute } from 'vue-router'
 
 export default {
@@ -56,7 +56,7 @@ export default {
     FormUpdate,
   },
   setup(props, { emit }) {
-    const { load_finder } = GetAllSlider()
+    const { load_finder } = GetAllBlog()
     
     const route = useRoute()
     const activeTab = ref(route.params.tab || 'list')

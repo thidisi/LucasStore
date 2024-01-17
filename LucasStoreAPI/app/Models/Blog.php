@@ -37,17 +37,6 @@ class Blog extends Model
 
     public $timestamps = true;
 
-    public function setNameAttribute($value)
-    {
-        $this->attributes['title'] = $value;
-        $this->attributes['slug'] = Str::slug($value);
-    }
-
-    const BLOG_STATUS = [
-        'ACTIVE' => 'active',
-        'INACTIVE' => 'inactive',
-    ];
-
     /**
      * Return the created_at configuration array for this model.
      *
@@ -57,4 +46,15 @@ class Blog extends Model
         'created_at' => 'date:d-m-Y',
         'updated_at' => 'date:d-m-Y'
     ];
+
+    const BLOG_STATUS = [
+        'ACTIVE' => 'active',
+        'INACTIVE' => 'inactive',
+    ];
+
+    public function setTitleAttribute($value)
+    {
+        $this->attributes['title'] = $value;
+        $this->attributes['slug'] = Str::slug($value);
+    }
 }

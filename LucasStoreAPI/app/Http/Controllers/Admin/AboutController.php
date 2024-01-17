@@ -19,49 +19,50 @@ class AboutController extends Controller
      */
     public function index()
     {
-        try {
-            $about = $this->about->firstOrFail();
-            return response()->json([
-                'about' => $about,
-            ], 200);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => config('const.message_error')], 403);
-        }
+        // try {
+        $about = $this->about->firstOrFail();
+        return response()->json([
+            'about' => $about,
+        ], 200);
+        // } catch (\Throwable $th) {
+        //     return response()->json(['message' => config('const.message_error')], 403);
+        // }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function save(Request $request)
     {
         try {
-            $about = $this->about->findOrFail($id);
-            $about->title = $request->get('title');
-            $about->email = $request->get('email');
-            $about->phone = $request->get('phone');
-            $about->phone_second = $request->get('phone_second') ? $request->get('phone_second') : null;
-            $about->address = $request->get('address');
-            $about->address_second = $request->get('address_second') ? $request->get('address_second') : 'During the update';
-            $about->branch = $request->get('branch');
-            $about->branch_second = $request->get('branch_second') ? $request->get('branch_second') : 'During the update';
-            $about->link_address_fb = $request->get('link_address_fb') ? $request->get('link_address_fb') : 'During the update';
-            $about->link_address_youtube = $request->get('link_address_youtube') ? $request->get('link_address_youtube') : 'During the update';
-            $about->link_address_zalo = $request->get('link_address_zalo') ? $request->get('link_address_zalo') : 'During the update';
-            $about->link_address_instagram = $request->get('link_address_instagram') ? $request->get('link_address_instagram') : 'During the update';
+            $about = $this->about->firstOrFail();
+            $data = $request->all();
+            $about->title = $data['title'] ? $data['title'] : null;
+            $about->email = $data['email'] ? $data['email'] : null;
+            $about->phone = $data['phone'] ? $data['phone'] : null;
+            $about->phone_second =  $data['phone_second'] ? $data['phone_second'] : null;
+            $about->address = $data['address'] ? $data['address'] : null;
+            $about->address_second = $data['address_second'] ? $data['address_second'] : null;
+            $about->branch = $data['branch'] ? $data['branch'] : null;
+            $about->branch_second = $data['branch_second'] ? $data['branch_second'] : null;
+            $about->link_address_fb = $data['link_address_fb'] ? $data['link_address_fb'] : null;
+            $about->link_address_youtube = $data['link_address_youtube'] ? $data['link_address_youtube'] : null;
+            $about->link_address_zalo = $data['link_address_zalo'] ? $data['link_address_zalo'] : null;
+            $about->link_address_instagram = $data['link_address_instagram'] ? $data['link_address_instagram'] : null;
 
-            $nameAvatar = null;
-            if ($request->hasFile('logo_new')) {
-                if ($request->file('logo_new')->isValid()) {
-                    $nameAvatar = Storage::disk('public')->put('logoShop', $request->file('logo_new'));
+            if (isset($data['logo']) && is_uploaded_file($data['logo'])) {
+                $images = $data['logo'];
+                if ($about->logo != null) {
                     if (Storage::disk('public')->exists($about->logo)) {
                         Storage::disk('public')->delete($about->logo);
                     }
                 }
+                $path = Storage::disk('public')->put('logoShop', $images);
+                $data['logo'] = $path;
             } else {
-                $nameAvatar = $request->get('logo_old');
+                $data['logo'] = $about->logo;
             }
-            $about->logo = $nameAvatar;
-            $about->update();
+            $about->update($data);
             return response()->json([
                 'about' => $about,
             ], 200);

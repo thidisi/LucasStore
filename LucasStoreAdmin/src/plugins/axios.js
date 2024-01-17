@@ -2,7 +2,7 @@ import axios from "axios"
 
 // Thiết lập cấu hình Axios
 const instance = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: import.meta.env.VITE_API_URL,
 })
 
 instance.interceptors.request.use(config => {

@@ -39,9 +39,9 @@ class CategoryController extends Controller
     {
         try {
             $data = $request->validated();
-            $categories = $this->categoryService->create($data);
+            $category = $this->categoryService->create($data);
             return response()->json([
-                'category' => $categories,
+                'category' => $category,
             ], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => config('const.message_error')], 403);

@@ -4,7 +4,10 @@ import { fileURLToPath } from 'node:url'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig } from 'vite'
+import dotenv from 'dotenv'
 import vuetify from 'vite-plugin-vuetify'
+
+dotenv.config()
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -33,7 +36,7 @@ export default defineConfig({
       vueTemplate: true,
     }),
   ],
-  define: { 'process.env': {} },
+  define: { 'process.env': process.env },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
