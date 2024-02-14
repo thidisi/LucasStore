@@ -19,14 +19,14 @@ class AboutController extends Controller
      */
     public function index()
     {
-        // try {
+        try {
         $about = $this->about->firstOrFail();
         return response()->json([
             'about' => $about,
         ], 200);
-        // } catch (\Throwable $th) {
-        //     return response()->json(['message' => config('const.message_error')], 403);
-        // }
+        } catch (\Throwable $th) {
+            return response()->json(['message' => config('const.message_error')], 403);
+        }
     }
 
     /**
